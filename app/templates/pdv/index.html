@@ -135,7 +135,7 @@
 
         .produtos-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 16px;
             padding: 20px;
             overflow-y: auto;
@@ -148,7 +148,6 @@
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: var(--radius-xl);
             padding: 16px;
-            cursor: pointer;
             transition: var(--transition);
             user-select: none;
             display: flex;
@@ -157,11 +156,9 @@
 
         .produto-card:hover {
             border-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-4px);
+            transform: translateY(-2px);
             box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.6);
         }
-
-        .produto-card:active { transform: translateY(-1px); }
 
         .produto-card img {
             width: 100%;
@@ -197,13 +194,95 @@
             font-size: 11px;
             color: var(--text-muted);
             margin-top: 4px;
+            margin-bottom: 12px;
+        }
+
+        /* Novo seletor de quantidade no card */
+        .card-acoes {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .card-qty-ctrl {
+            display: flex;
+            align-items: center;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 2px;
+            width: 90px;
+            justify-content: space-between;
+        }
+
+        .card-qty-btn {
+            width: 22px;
+            height: 22px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .card-qty-btn:hover { background: rgba(255, 255, 255, 0.15); }
+
+        .card-qty-input {
+            width: 32px;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: monospace;
+            outline: none;
+        }
+
+        /* Remover setas do input number */
+        .card-qty-input::-webkit-outer-spin-button,
+        .card-qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .card-qty-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .btn-add-card {
+            flex: 1;
+            padding: 8px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .btn-add-card:hover {
+            background: var(--primary-hover);
         }
 
         .produto-card.sem-estoque {
             opacity: .3;
             cursor: not-allowed;
-            pointer-events: none;
             filter: grayscale(1);
+        }
+
+        .produto-card.sem-estoque .card-acoes {
+            display: none;
         }
 
         /* ── Coluna Direita: Carrinho (Glassmorphic Window) ── */
@@ -516,8 +595,7 @@
                  data-nome="{{ p.nome }}"
                  data-preco="{{ p.preco }}"
                  data-estoque="{{ p.estoque_atual }}"
-                 data-nome-lower="{{ p.nome.lower() }}"
-                 onclick="adicionarAoCarrinho(this)">
+                 data-nome-lower="{{ p.nome.lower() }}">
 
                 <img src="{{ p.imagem_url }}" alt="{{ p.nome }}">
                 <div class="produto-card-nome">{{ p.nome }}</div>
@@ -526,6 +604,17 @@
                 </div>
                 <div class="produto-card-estoque">
                     Estoque: {{ p.estoque_atual }}
+                </div>
+
+                <div class="card-acoes">
+                    <div class="card-qty-ctrl">
+                        <button type="button" class="card-qty-btn" onclick="ajustarQtdCard({{ p.id }}, -1)">−</button>
+                        <input type="number" id="input-qtd-{{ p.id }}" class="card-qty-input" value="1" min="1" max="{{ p.estoque_atual }}" onchange="validarQtdCard(this, {{ p.estoque_atual }})">
+                        <button type="button" class="card-qty-btn" onclick="ajustarQtdCard({{ p.id }}, 1)">+</button>
+                    </div>
+                    <button type="button" class="btn-add-card" onclick="adicionarAoCarrinho(this.closest('.produto-card'))">
+                        + Add
+                    </button>
                 </div>
             </div>
             {% endfor %}
@@ -610,24 +699,56 @@ let carrinho = [];
 let clienteAtual = { id: 0, associado: false };
 const DESCONTO_PCT = {{ desconto_associado }};
 
+// Funções para manipular a quantidade direto no card do produto
+function ajustarQtdCard(id, delta) {
+    const input = document.getElementById(`input-qtd-${id}`);
+    if (!input) return;
+    let val = parseInt(input.value) || 1;
+    const max = parseInt(input.max) || 999;
+    
+    val += delta;
+    if (val < 1) val = 1;
+    if (val > max) val = max;
+    
+    input.value = val;
+}
+
+function validarQtdCard(input, max) {
+    let val = parseInt(input.value);
+    if (isNaN(val) || val < 1) input.value = 1;
+    else if (val > max) input.value = max;
+}
+
 function adicionarAoCarrinho(card) {
     const id       = parseInt(card.dataset.id);
     const nome     = card.dataset.nome;
     const preco    = parseFloat(card.dataset.preco);
     const estoque  = parseInt(card.dataset.estoque);
 
+    const inputQtd = document.getElementById(`input-qtd-${id}`);
+    const qtdDesejada = inputQtd ? (parseInt(inputQtd.value) || 1) : 1;
+
     const existente = carrinho.find(i => i.produto_id === id);
 
     if (existente) {
-        if (existente.quantidade < existente.estoque_max) {
-            existente.quantidade++;
+        const novaQtd = existente.quantidade + qtdDesejada;
+        if (novaQtd <= existente.estoque_max) {
+            existente.quantidade = novaQtd;
         } else {
-            alert(`Estoque máximo atingido: ${existente.estoque_max} unidade(s).`);
+            alert(`Estoque máximo atingido. Disponível: ${existente.estoque_max} unidade(s).`);
             return;
         }
     } else {
-        carrinho.push({ produto_id: id, nome, preco, quantidade: 1, estoque_max: estoque });
+        if (qtdDesejada <= estoque) {
+            carrinho.push({ produto_id: id, nome, preco, quantidade: qtdDesejada, estoque_max: estoque });
+        } else {
+            alert(`Estoque insuficiente. Disponível: ${estoque} unidade(s).`);
+            return;
+        }
     }
+
+    // Reseta o input do card de volta para 1 após adicionar
+    if (inputQtd) inputQtd.value = 1;
 
     renderizarCarrinho();
 }

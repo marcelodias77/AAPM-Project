@@ -131,7 +131,6 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
-        /* Customização sutil da seta do select no dark mode */
         .filtros-form select {
             appearance: none;
             -webkit-appearance: none;
@@ -233,7 +232,6 @@
             background-color: rgba(255, 255, 255, 0.02);
         }
 
-        /* Estilização interna da tabela */
         .img-produto-tabela {
             border-radius: 6px;
             border: 1px solid var(--border-color);
@@ -262,7 +260,6 @@
             font-weight: 600;
         }
 
-        /* Botões de Ação na Tabela */
         .btn-tabela-editar {
             color: #3b82f6;
             text-decoration: none;
@@ -290,6 +287,66 @@
         .btn-tabela-desativar:hover {
             color: var(--danger-hover);
             text-decoration: underline;
+        }
+
+        /* --- ESTILOS DA PAGINAÇÃO --- */
+        .paginacao-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background-color: rgba(15, 23, 42, 0.4);
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .paginacao-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .paginacao-botoes {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            padding: 0 10px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .page-link:hover:not(.disabled):not(.active) {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .page-link.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            cursor: default;
+            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.4);
+        }
+
+        .page-link.disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            pointer-events: none;
         }
 
         /* Link voltar fim da página */
@@ -402,13 +459,44 @@
 
                     {% if not produtos %}
                     <tr>
-                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                        <td colspan="{{ 6 if usuario.role == 'admin' else 5 }}" style="text-align: center; color: var(--text-muted); padding: 40px;">
                             🔍 Nenhum produto correspondente aos filtros foi encontrado.
                         </td>
                     </tr>
                     {% endif %}
                 </tbody>
             </table>
+
+            <!-- --- BARRA DE PAGINAÇÃO --- -->
+            {% if total_paginas > 1 %}
+            <div class="paginacao-container">
+                <div class="paginacao-info">
+                    Página <strong>{{ pagina_atual }}</strong> de <strong>{{ total_paginas }}</strong>
+                </div>
+
+                <div class="paginacao-botoes">
+                    <!-- Botão Anterior -->
+                    <a href="/produtos?pagina={{ pagina_atual - 1 }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
+                       class="page-link {{ 'disabled' if pagina_atual <= 1 else '' }}">
+                        Anterior
+                    </a>
+
+                    <!-- Links Numéricos (1, 2, 3...) -->
+                    {% for p in range(1, total_paginas + 1) %}
+                        <a href="/produtos?pagina={{ p }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
+                           class="page-link {{ 'active' if p == pagina_atual else '' }}">
+                            {{ p }}
+                        </a>
+                    {% endfor %}
+
+                    <!-- Botão Próximo -->
+                    <a href="/produtos?pagina={{ pagina_atual + 1 }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
+                       class="page-link {{ 'disabled' if pagina_atual >= total_paginas else '' }}">
+                        Proximo
+                    </a>
+                </div>
+            </div>
+            {% endif %}
         </div>
 
         <p><a href="/" class="link-voltar">← Voltar para o Dashboard</a></p>

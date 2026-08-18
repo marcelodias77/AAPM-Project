@@ -1,4 +1,4 @@
-# controllers/produto_controller.py 
+import math
 import os
 import shutil
 import uuid
@@ -18,7 +18,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 # Pasta onde as imagens serão salvas dentro de /static
 UPLOAD_DIR = "app/static/uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)  # cria a pasta se não existir
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 # ============================================================
@@ -30,9 +30,16 @@ def listar_produtos(
     request: Request,
     busca: str = "",
     categoria_id: int = 0,       # 0 = todas as categorias
+    pagina: int = 1,             # Página atual
     db: Session = Depends(get_db),
     usuario = Depends(get_usuario_logado)
 ):
+    itens_por_pagina = 10
+    
+    # Validação simples para evitar páginas menores que 1
+    if pagina < 1:
+        pagina = 1
+
     query = db.query(Produto).filter(Produto.ativo == True)
 
     if busca:
@@ -41,19 +48,42 @@ def listar_produtos(
     if categoria_id:
         query = query.filter(Produto.categoria_id == categoria_id)
 
-    produtos    = query.order_by(Produto.nome).all()
-    categorias  = db.query(Categoria).filter(Categoria.ativo == True).all()
+    # 1. Contagem total de registros filtrados (antes de aplicar offset e limit)
+    total_itens = query.count()
+
+    # 2. Cálculo do número total de páginas
+    total_paginas = math.ceil(total_itens / itens_por_pagina) or 1
+
+    # Ajusta a página caso o usuário tente acessar uma página além do limite
+    if pagina > total_paginas:
+        pagina = total_paginas
+
+    # 3. Cálculo do offset para a consulta no banco
+    offset = (pagina - 1) * itens_por_pagina
+
+    # 4. Busca com paginação e ordenação
+    produtos = (
+        query.order_by(Produto.nome)
+        .offset(offset)
+        .limit(itens_por_pagina)
+        .all()
+    )
+
+    categorias = db.query(Categoria).filter(Categoria.ativo == True).all()
 
     return templates.TemplateResponse(
         request,
         "produtos/index.html",
         {
-            "request":      request,
-            "usuario":      usuario,
-            "produtos":     produtos,
-            "categorias":   categorias,
-            "busca":        busca,
-            "categoria_id": categoria_id,
+            "request":       request,
+            "usuario":       usuario,
+            "produtos":      produtos,
+            "categorias":    categorias,
+            "busca":         busca,
+            "categoria_id":  categoria_id,
+            "pagina_atual":  pagina,
+            "total_paginas": total_paginas,
+            "total_itens":   total_itens,
         }
     )
 
