@@ -4,8 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard — AAPM SENAI</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        /* --- DESIGN SYSTEM MODERNIZADO --- */
+        /* ==========================================================================
+           1. VARIÁVEIS E DESIGN SYSTEM
+           ========================================================================== */
         :root {
             --primary: #0066cc;
             --primary-light: #e6f0fa;
@@ -27,6 +35,9 @@
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* ==========================================================================
+           2. RESET E ESTILOS BASE
+           ========================================================================== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -42,7 +53,9 @@
             flex-direction: column;
         }
 
-        /* --- KEYFRAMES PARA AS ANIMAÇÕES DE ENTRADA --- */
+        /* ==========================================================================
+           3. ANIMAÇÕES
+           ========================================================================== */
         @keyframes fadeInDown {
             from {
                 opacity: 0;
@@ -65,7 +78,9 @@
             }
         }
 
-        /* --- SIDEBAR / NAV CENTRALIZADA --- */
+        /* ==========================================================================
+           4. SIDEBAR / NAV
+           ========================================================================== */
         .sidebar {
             background-color: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
@@ -79,8 +94,6 @@
             justify-content: space-between;
             padding: 0 24px;
             z-index: 100;
-            
-            /* Animação na barra superior */
             animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
@@ -112,7 +125,7 @@
         }
 
         .nav-menu {
-            display: none; /* Mobile usa a grade principal */
+            display: none; /* Exibido em telas maiores via Media Query */
             gap: 6px;
         }
 
@@ -126,15 +139,18 @@
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover, 
+        .nav-link.active {
             background-color: rgba(255, 255, 255, 0.05);
             color: var(--text-main);
         }
 
-        /* --- ÁREA PRINCIPAL --- */
+        /* ==========================================================================
+           5. ÁREA PRINCIPAL
+           ========================================================================== */
         .main-content {
             width: 100%;
             max-width: 1300px;
@@ -143,7 +159,7 @@
             flex-grow: 1;
         }
 
-        /* --- HEADER DO PERFIL --- */
+        /* --- Header do Perfil --- */
         .profile-card {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 1px solid var(--border-color);
@@ -155,8 +171,6 @@
             margin-bottom: 32px;
             position: relative;
             overflow: hidden;
-            
-            /* Animação do card de perfil */
             animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
             animation-delay: 0.1s;
         }
@@ -183,13 +197,14 @@
         .avatar-placeholder {
             width: 48px;
             height: 48px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-color);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
+            color: var(--text-muted);
         }
 
         .user-greeting h1 {
@@ -235,7 +250,9 @@
             transform: translateY(-1px);
         }
 
-        /* --- CARDS DE MÓDULOS --- */
+        /* ==========================================================================
+           6. CARDS DE MÓDULOS (GRID)
+           ========================================================================== */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -254,12 +271,10 @@
             flex-direction: column;
             justify-content: space-between;
             position: relative;
-            
-            /* Configuração padrão da animação dos cards */
             animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
-        /* --- EFEITO STAGGER (Atraso cascata para cada card) --- */
+        /* Cascata de animação dos cards */
         .card-item:nth-child(1) { animation-delay: 0.15s; }
         .card-item:nth-child(2) { animation-delay: 0.22s; }
         .card-item:nth-child(3) { animation-delay: 0.29s; }
@@ -268,7 +283,7 @@
         .card-item:nth-child(6) { animation-delay: 0.50s; }
 
         .card-item:hover {
-            border-color: rgba(255,255,255,0.2);
+            border-color: rgba(255, 255, 255, 0.2);
             transform: translateY(-4px);
             box-shadow: 0 12px 24px -10px rgba(0,0,0,0.4);
         }
@@ -319,7 +334,9 @@
             color: var(--text-main);
         }
 
-        /* --- RESPONSIVIDADE PARA TELAS GRANDES (GRID/SIDEBAR LATERAL) --- */
+        /* ==========================================================================
+           7. MEDIA QUERIES (DESKTOP)
+           ========================================================================== */
         @media (min-width: 1024px) {
             body {
                 flex-direction: row;
@@ -335,8 +352,7 @@
                 border-bottom: none;
                 border-right: 1px solid var(--border-color);
                 position: fixed;
-                /* Altera animação na versão desktop para surgir da esquerda */
-                animation: none; 
+                animation: none;
                 opacity: 1;
             }
 
@@ -369,6 +385,7 @@
 </head>
 <body>
 
+    <!-- SIDEBAR / BARRA DE NAVEGAÇÃO -->
     <aside class="sidebar">
         <a href="#" class="brand-box">
             <div class="brand-logo">S</div>
@@ -376,22 +393,44 @@
         </a>
         
         <nav class="nav-menu">
-            <a href="/pdv" class="nav-link">💻 PDV</a>
-            <a href="/produtos" class="nav-link">📦 Produtos</a>
-            <a href="/categorias" class="nav-link">🏷️ Categorias</a>
-            <a href="/movimentacoes" class="nav-link">🔁 Movimentações</a>
-            <a href="/clientes" class="nav-link">🙎‍♂️ Clientes</a>
+            <a href="/pdv" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                PDV
+            </a>
+            <a href="/produtos" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                Produtos
+            </a>
+            <a href="/categorias" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                Categorias
+            </a>
+            <a href="/movimentacoes" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                Movimentações
+            </a>
+            <a href="/clientes" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Clientes
+            </a>
             {% if usuario.role == 'admin' %}
-                <a href="/usuarios" class="nav-link">👥 Usuários</a>
+            <a href="/usuarios" class="nav-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Usuários
+            </a>
             {% endif %}
         </nav>
     </aside>
 
+    <!-- CONTEÚDO PRINCIPAL -->
     <div class="main-content">
         
+        <!-- CARD DE PERFIL -->
         <header class="profile-card">
             <div class="user-meta">
-                <div class="avatar-placeholder">👤</div>
+                <div class="avatar-placeholder">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
                 <div class="user-greeting">
                     <h1>Olá, {{ usuario.nome }}</h1>
                     {% if usuario.role == 'admin' %}
@@ -408,8 +447,10 @@
             </a>
         </header>
 
+        <!-- GRADE DE MÓDULOS -->
         <main class="cards-grid">
             
+            <!-- PDV -->
             <a href="/pdv" class="card-item">
                 <div>
                     <div class="card-icon-wrapper">
@@ -421,6 +462,7 @@
                 <div class="card-action">Acessar PDV &rarr;</div>
             </a>
 
+            <!-- PRODUTOS -->
             <a href="/produtos" class="card-item">
                 <div>
                     <div class="card-icon-wrapper">
@@ -432,6 +474,7 @@
                 <div class="card-action">Gerenciar itens &rarr;</div>
             </a>
 
+            <!-- CATEGORIAS -->
             <a href="/categorias" class="card-item">
                 <div>
                     <div class="card-icon-wrapper">
@@ -443,6 +486,7 @@
                 <div class="card-action">Organizar grupos &rarr;</div>
             </a>
 
+            <!-- MOVIMENTAÇÕES -->
             <a href="/movimentacoes" class="card-item">
                 <div>
                     <div class="card-icon-wrapper">
@@ -454,6 +498,7 @@
                 <div class="card-action">Lançar estoque &rarr;</div>
             </a>
 
+            <!-- CLIENTES -->
             <a href="/clientes" class="card-item">
                 <div>
                     <div class="card-icon-wrapper">
@@ -465,6 +510,7 @@
                 <div class="card-action">Ver clientes &rarr;</div>
             </a>
 
+            <!-- USUÁRIOS (APENAS ADMIN) -->
             {% if usuario.role == 'admin' %}
             <a href="/usuarios" class="card-item">
                 <div>

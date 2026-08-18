@@ -70,7 +70,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         h1 {
@@ -78,6 +78,82 @@
             font-weight: 700;
             color: var(--text-main);
             letter-spacing: -0.02em;
+        }
+
+        /* --- CARDS DE RESUMO / ESTATÍSTICAS --- */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--bg-surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+        }
+
+        .kpi-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .kpi-icon.produtos {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .kpi-icon.unidades {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .kpi-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .kpi-titulo {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .kpi-valor {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.2;
+            margin-top: 2px;
+        }
+
+        .kpi-valor.destaque-verde {
+            color: var(--success);
+            text-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
         }
 
         /* --- ALERTAS DE SUCESSO --- */
@@ -373,6 +449,33 @@
             {% if usuario.role == 'admin' %}
                 <a href="/produtos/novo" class="btn-novo">+ Novo Produto</a>
             {% endif %}
+        </div>
+
+        <!-- --- PAINEL DE RESUMO (KPIS) --- -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon produtos">📦</div>
+                <div class="kpi-content">
+                    <span class="kpi-titulo">Total de Produtos</span>
+                    <span class="kpi-valor">
+                        {{ total_produtos if total_produtos is defined else produtos|length }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon unidades">📊</div>
+                <div class="kpi-content">
+                    <span class="kpi-titulo">Unidades em Estoque</span>
+                    <span class="kpi-valor destaque-verde">
+                        {% if total_unidades is defined %}
+                            {{ total_unidades }}
+                        {% else %}
+                            {{ produtos | sum(attribute='estoque_atual') }}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
         </div>
 
         {% if request.query_params.get('criado') == 'ok' %}
