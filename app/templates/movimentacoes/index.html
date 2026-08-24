@@ -354,6 +354,37 @@
                 </tbody>
             </table>
         </div>
+        <!-- --- BARRA DE PAGINAÇÃO --- -->
+            {% if total_paginas > 1 %}
+            <div class="paginacao-container">
+                <div class="paginacao-info">
+                    Página <strong>{{ pagina_atual }}</strong> de <strong>{{ total_paginas }}</strong>
+                </div>
+
+                <div class="paginacao-botoes">
+                    <!-- Botão Anterior -->
+                    <a href="/produtos?pagina={{ pagina_atual - 1 }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
+                       class="page-link {{ 'disabled' if pagina_atual <= 1 else '' }}">
+                        Anterior
+                    </a>
+
+                    <!-- Links Numéricos (1, 2, 3...) -->
+                    {% for p in range(1, total_paginas + 1) %}
+                        <a href="/produtos?pagina={{ p }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
+                           class="page-link {{ 'active' if p == pagina_atual else '' }}">
+                            {{ p }}
+                        </a>
+                    {% endfor %}
+
+                    <!-- Botão Próximo -->
+                    <a href="/produtos?pagina={{ pagina_atual + 1 }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
+                       class="page-link {{ 'disabled' if pagina_atual >= total_paginas else '' }}">
+                        Proximo
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
 
         <p><a href="/" class="back-link">← Voltar para o Dashboard</a></p>
     </div>

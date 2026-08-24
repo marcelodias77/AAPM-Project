@@ -62,6 +62,8 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <!-- Redirecionamento de segurança via HTML caso JS esteja desativado -->
+            <meta http-equiv="refresh" content="5;url=/"> 
             <title>404 — ERROR</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,8 +71,8 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
             
             <style>
                 :root {
-                    --bg-base: #000000;       /* Preto absoluto idêntico à imagem */
-                    --glitch-red: #e61c1c;    /* Vermelho puro e denso da referência */
+                    --bg-base: #000000;
+                    --glitch-red: #e61c1c;
                     --text-main: #ffffff;
                     --text-muted: #64748b;
                     --radius-md: 12px;
@@ -104,7 +106,6 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
                     align-items: center;
                 }
 
-                /* --- EFEITO GLITCH ALINHADO COM A IMAGEM --- */
                 .glitch-wrapper {
                     font-family: 'Share Tech Mono', monospace;
                     display: flex;
@@ -115,7 +116,6 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
                     user-select: none;
                 }
 
-                /* Texto ERROR: Branco, largo, exatamente acima do 404 */
                 .glitch-text {
                     font-size: 4rem;
                     font-weight: 700;
@@ -124,12 +124,11 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
                     color: #ffffff;
                     line-height: 0.9;
                     margin-bottom: 5px;
-                    padding-left: 14px; /* Compensa o letter-spacing para manter perfeitamente centralizado */
+                    padding-left: 14px;
                     position: relative;
                     animation: textGlowPulse 2s infinite alternate;
                 }
 
-                /* Número 404: Vermelho e gigante */
                 .glitch-number {
                     font-size: 11rem;
                     font-weight: 700;
@@ -139,7 +138,6 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
                     position: relative;
                 }
 
-                /* Pseudo-elementos para criar os cortes horizontais da imagem */
                 .glitch-number::before, .glitch-number::after,
                 .glitch-text::before, .glitch-text::after {
                     content: attr(data-text);
@@ -151,7 +149,6 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
                     background: var(--bg-base);
                 }
 
-                /* Configuração do espaçamento dos cortes horizontais */
                 .glitch-text::before, .glitch-number::before {
                     clip: rect(15px, 9999px, 22px, 0);
                     animation: glitch-slice-1 2.5s infinite linear alternate-reverse;
@@ -162,13 +159,8 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
                     animation: glitch-slice-2 2s infinite linear alternate-reverse;
                 }
 
-                /* Elementos adicionais para simular os blocos vazados da imagem */
-                .glitch-number::before {
-                    color: var(--glitch-red);
-                }
-                .glitch-text::before {
-                    color: #ffffff;
-                }
+                .glitch-number::before { color: var(--glitch-red); }
+                .glitch-text::before { color: #ffffff; }
 
                 h2 {
                     font-size: 1.5rem;
@@ -181,11 +173,22 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
                     color: var(--text-muted);
                     font-size: 0.95rem;
                     max-width: 400px;
-                    margin: 0 auto 36px auto;
+                    margin: 0 auto 20px auto;
                     line-height: 1.6;
                 }
 
-                /* Botão Customizado */
+                .redirect-notice {
+                    font-family: 'Share Tech Mono', monospace;
+                    font-size: 0.85rem;
+                    color: #a3b8cc;
+                    margin-bottom: 30px;
+                }
+
+                .redirect-notice span {
+                    color: var(--glitch-red);
+                    font-weight: bold;
+                }
+
                 .btn {
                     display: inline-flex;
                     align-items: center;
@@ -212,9 +215,8 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
                     transform: translateY(0);
                 }
 
-                /* --- KEYFRAMES DO CORTE DIGITAL (IDÊNTICO À IMAGEM) --- */
                 @keyframes glitch-slice-1 {
-                    0% { clip: rect(20px, 9999px, 25px, 0); transform: translateX(-4px); text-shadow: 2px 0 0 calc(var(--glitch-red)); }
+                    0% { clip: rect(20px, 9999px, 25px, 0); transform: translateX(-4px); }
                     20% { clip: rect(50px, 9999px, 54px, 0); transform: translateX(3px); }
                     40% { clip: rect(10px, 9999px, 14px, 0); transform: translateX(-2px); }
                     60% { clip: rect(85px, 9999px, 92px, 0); transform: translateX(4px); }
@@ -246,11 +248,26 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
                 <h2>Caminho não encontrado</h2>
                 <p>A rota que você tentou acessar não existe no sistema AAPM.</p>
                 
-                <a href="/" class="btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                    Voltar para o Início
-                </a>
-            </div>
+                <div class="redirect-notice">
+                    Redirecionando em <span id="timer">3</span> segundos...
+                </div>
+                
+
+            <script>
+                let seconds = 3;
+                const timerElement = document.getElementById('timer');
+
+                const countdown = setInterval(() => {
+                    seconds--;
+                    if (timerElement) {
+                        timerElement.textContent = seconds;
+                    }
+                    if (seconds <= 0) {
+                        clearInterval(countdown);
+                        window.location.href = '/';
+                    }
+                }, 1000);
+            </script>
         </body>
         </html>
         """
