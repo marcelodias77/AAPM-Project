@@ -454,7 +454,7 @@
         <!-- --- PAINEL DE RESUMO (KPIS) --- -->
         <div class="kpi-grid">
             <div class="kpi-card">
-                <div class="kpi-icon produtos">📦</div>
+                <div class="kpi-icon produtos"></div>
                 <div class="kpi-content">
                     <span class="kpi-titulo">Total de Produtos</span>
                     <span class="kpi-valor">
@@ -464,7 +464,7 @@
             </div>
 
             <div class="kpi-card">
-                <div class="kpi-icon unidades">📊</div>
+                <div class="kpi-icon unidades"></div>
                 <div class="kpi-content">
                     <span class="kpi-titulo">Unidades em Estoque</span>
                     <span class="kpi-valor destaque-verde">
@@ -479,10 +479,10 @@
         </div>
 
         {% if request.query_params.get('criado') == 'ok' %}
-            <div class="alerta-sucesso">✓ Produto cadastrado com sucesso!</div>
+            <div class="alerta-sucesso"> Produto cadastrado com sucesso!</div>
         {% endif %}
         {% if request.query_params.get('desativado') == 'ok' %}
-            <div class="alerta-sucesso">✓ Produto desativado com sucesso.</div>
+            <div class="alerta-sucesso"> Produto desativado com sucesso.</div>
         {% endif %}
 
         <div class="filtros-card">
@@ -563,7 +563,7 @@
                     {% if not produtos %}
                     <tr>
                         <td colspan="{{ 6 if usuario.role == 'admin' else 5 }}" style="text-align: center; color: var(--text-muted); padding: 40px;">
-                            🔍 Nenhum produto correspondente aos filtros foi encontrado.
+                             Nenhum produto correspondente aos filtros foi encontrado.
                         </td>
                     </tr>
                     {% endif %}
