@@ -209,4 +209,4 @@ def historico_vendas(
     return templates.TemplateResponse(
         request,
         "pdv/historico.html",
-        {"request": request, "usuario": usuario, "vendas": vendas})
+        {"request": request, "usuario": usuario, "vendas": vendas}) 
