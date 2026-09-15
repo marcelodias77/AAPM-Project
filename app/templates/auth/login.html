@@ -56,6 +56,17 @@
             overflow: hidden;
         }
 
+        /* --- CANVAS EM MOVIMENTO --- */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
         body::before {
             content: '';
             position: absolute;
@@ -67,6 +78,7 @@
             top: -100px;
             left: -100px;
             pointer-events: none;
+            z-index: 1;
         }
 
         body::after {
@@ -80,6 +92,7 @@
             bottom: -100px;
             right: -100px;
             pointer-events: none;
+            z-index: 1;
         }
 
         /* --- CARD DE LOGIN --- */
@@ -127,7 +140,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background: #172237; 
+            background: rgba(30, 41, 59, 0.9); 
         }
 
         .system-tag::before { clip: rect(10px, 9999px, 15px, 0); animation: glitch-anim 1.5s infinite linear alternate-reverse; }
@@ -215,7 +228,7 @@
             font-weight: 700;
             letter-spacing: 0.5px;
             cursor: pointer;
-            overflow: hidden; /* Importante para o feixe de luz não vazar */
+            overflow: hidden;
             transition: var(--transition);
             box-shadow: 0 4px 14px rgba(0, 102, 204, 0.3);
             margin-top: 16px;
@@ -245,10 +258,9 @@
             box-shadow: 0 0 25px rgba(59, 130, 246, 0.6), 
                         0 0 8px rgba(255, 0, 60, 0.4);
             filter: brightness(1.1);
-            animation: buttonGlitchTremor 0.2s linear infinite; /* Leve tremor sci-fi */
+            animation: buttonGlitchTremor 0.2s linear infinite;
         }
 
-        /* Gatilho para disparar o feixe de luz continuamente ao focar/passar o mouse */
         button[type="submit"]:hover::before {
             animation: shineSweep 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
@@ -292,14 +304,12 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* Animação do Feixe de Luz passando pelo botão */
         @keyframes shineSweep {
             0% { left: -150%; }
             50% { left: 150%; }
             100% { left: 150%; }
         }
 
-        /* Micro vibração simulando sobrecarga de energia (Cyber-style) */
         @keyframes buttonGlitchTremor {
             0% { transform: translateY(-2px) translateX(0); }
             25% { transform: translateY(-2px) translateX(0.5px); }
@@ -337,6 +347,9 @@
     </style>
 </head>
 <body>
+
+    <!-- CANVAS DO FUNDO EM MOVIMENTO -->
+    <canvas id="starfield"></canvas>
 
     <div class="login-card">
         
@@ -391,5 +404,72 @@
         </div>
     </div>
 
+    <!-- SCRIPT DA ANIMAÇÃO DE FUNDO STARFIELD -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('starfield');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+            const numStars = 700;
+            const speed = 2.5;
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function createStars() {
+                stars = [];
+                for (let i = 0; i < numStars; i++) {
+                    stars.push({
+                        x: (Math.random() - 0.5) * canvas.width,
+                        y: (Math.random() - 0.5) * canvas.height,
+                        z: Math.random() * canvas.width
+                    });
+                }
+            }
+
+            function updateAndDraw() {
+                ctx.fillStyle = "rgba(15, 23, 42, 0.35)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+
+                stars.forEach(star => {
+                    star.z -= speed;
+
+                    if (star.z <= 0) {
+                        star.z = canvas.width;
+                        star.x = (Math.random() - 0.5) * canvas.width;
+                        star.y = (Math.random() - 0.5) * canvas.height;
+                    }
+
+                    const k = 256 / star.z;
+                    const px = star.x * k + cx;
+                    const py = star.y * k + cy;
+
+                    if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+                        const size = (1 - star.z / canvas.width) * 2.2;
+                        
+                        ctx.fillStyle = "rgba(226, 232, 240, 0.9)";
+                        ctx.beginPath();
+                        ctx.arc(px, py, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+
+                requestAnimationFrame(updateAndDraw);
+            }
+
+            createStars();
+            updateAndDraw();
+        });
+    </script>
 </body>
 </html>

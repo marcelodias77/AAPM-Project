@@ -52,6 +52,17 @@
             overflow: hidden;
         }
 
+        /* --- CANVAS EM MOVIMENTO --- */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
         /* Iluminação ambiente de fundo sincronizada */
         body::before {
             content: '';
@@ -64,6 +75,7 @@
             top: -100px;
             left: -100px;
             pointer-events: none;
+            z-index: 1;
         }
 
         body::after {
@@ -77,6 +89,7 @@
             bottom: -100px;
             right: -100px;
             pointer-events: none;
+            z-index: 1;
         }
 
         /* --- CARD DE CADASTRO (GLASSMORPHISM) --- */
@@ -116,7 +129,7 @@
             animation: textGlitch 1.5s infinite linear alternate-reverse;
         }
 
-        /* Máscaras de corte digitais */
+        /* Máscaras de corte digitais ajustadas para a transparência do card */
         .system-tag::before, .system-tag::after,
         .glitch-title::before, .glitch-title::after {
             content: attr(data-text);
@@ -125,7 +138,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background: #172237; /* Recorta sobre a cor interna do card */
+            background: rgba(30, 41, 59, 0.9); /* Recorta sobre a cor interna do card */
         }
 
         .system-tag::before { clip: rect(10px, 9999px, 15px, 0); animation: glitch-anim 1.5s infinite linear alternate-reverse; }
@@ -333,6 +346,9 @@
 </head>
 <body>
 
+    <!-- CANVAS DO FUNDO EM MOVIMENTO -->
+    <canvas id="starfield"></canvas>
+
     <div class="cadastro-card">
         
         <!-- Cabeçalho com Atributos data-text habilitados -->
@@ -390,5 +406,72 @@
         </div>
     </div>
 
+    <!-- SCRIPT DA ANIMAÇÃO DE FUNDO -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('starfield');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+            const numStars = 700;
+            const speed = 2.5;
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function createStars() {
+                stars = [];
+                for (let i = 0; i < numStars; i++) {
+                    stars.push({
+                        x: (Math.random() - 0.5) * canvas.width,
+                        y: (Math.random() - 0.5) * canvas.height,
+                        z: Math.random() * canvas.width
+                    });
+                }
+            }
+
+            function updateAndDraw() {
+                ctx.fillStyle = "rgba(15, 23, 42, 0.35)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+
+                stars.forEach(star => {
+                    star.z -= speed;
+
+                    if (star.z <= 0) {
+                        star.z = canvas.width;
+                        star.x = (Math.random() - 0.5) * canvas.width;
+                        star.y = (Math.random() - 0.5) * canvas.height;
+                    }
+
+                    const k = 256 / star.z;
+                    const px = star.x * k + cx;
+                    const py = star.y * k + cy;
+
+                    if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+                        const size = (1 - star.z / canvas.width) * 2.2;
+                        
+                        ctx.fillStyle = "rgba(226, 232, 240, 0.9)";
+                        ctx.beginPath();
+                        ctx.arc(px, py, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+
+                requestAnimationFrame(updateAndDraw);
+            }
+
+            createStars();
+            updateAndDraw();
+        });
+    </script>
 </body>
 </html>
