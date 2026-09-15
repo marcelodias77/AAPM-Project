@@ -41,6 +41,10 @@ def listar_categorias(
             "request":    request,
             "usuario":    admin,
             "categorias": categorias,
+            # Paginação mínima para evitar erros em templates que esperam estas variáveis
+            "pagina_atual": 1,
+            "total_paginas": 1,
+            "total_itens": len(categorias),
         }
     )
 

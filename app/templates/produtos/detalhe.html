@@ -241,9 +241,9 @@
         <div class="acoes-container">
             <a href="/produtos">← Voltar para a listagem</a>
             
-            {% if usuario.role == 'admin' %}
-                <a href="/produtos/{{ produto.id }}/editar" class="btn-editar">Editar Produto</a>
-            {% endif %}
+                {% if usuario.role == 'admin' %}
+                    <a href="/produtos/{{ produto.id }}/editar" class="btn-editar">Editar Produto</a>
+                {% endif %}
         </div>
 
     </div>

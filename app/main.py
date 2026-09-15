@@ -38,20 +38,21 @@ def tela_home(
     request: Request, 
     usuario = Depends(get_usuario_opcional)
     ):
-
-    #Não logado - exibe a tela index
-    if usuario is None:
+    # Exibe a tela principal (home) mesmo para usuários não autenticados.
+    # O template irá adaptar a exibição caso 'usuario' seja None.
+        # Não logado - exibe a tela index
+        if usuario is None:
+            return templates.TemplateResponse(
+                request,
+                "index.html",
+                {"request": request}
+            )
+        # Logado - exibe a tela home
         return templates.TemplateResponse(
-            request,
-            "index.html",
-            {"request": request}
-        )
-    # Logado - exibe a tela home
-    return templates.TemplateResponse(
-            request,
-            "home.html",
-            {"request": request, "usuario": usuario}
-        )
+                request,
+                "home.html",
+                {"request": request, "usuario": usuario}
+            )
 
 @app.exception_handler(StarletteHTTPException)
 async def custom_404_handler(request: Request, exc: StarletteHTTPException):

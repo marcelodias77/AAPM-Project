@@ -51,6 +51,10 @@ def listar_clientes(
             "busca":             busca,
             "apenas_associados": apenas_associados,
             "total_associados":  total_associados,
+            # Paginação mínima (templates atuais esperam essas variáveis)
+            "pagina_atual": 1,
+            "total_paginas": 1,
+            "total_itens": len(clientes),
         }
     )
 

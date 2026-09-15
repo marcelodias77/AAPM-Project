@@ -3,32 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clientes — AAPM SENAI</title>
+    <title>Usuários — AAPM SENAI</title>
+    <!-- Fontes Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- DESIGN SYSTEM MODERNIZADO (DARK-PREMIUM) --- */
+        /* --- DESIGN SYSTEM MODERNIZADO (DARK-PREMIUM GLASSMORPHISM) --- */
         :root {
-            --primary: #0066cc;
+            --primary: #0066cc;       /* Azul Institucional SENAI */
             --primary-gradient: linear-gradient(135deg, #0066cc, #3b82f6);
-            --bg-base: #0f172a;       /* Fundo escuro slate */
+            --bg-base: #0f172a;       /* Fundo Dark Slate */
             --bg-surface: rgba(30, 41, 59, 0.7); /* Vidro fosco card */
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
             
-            /* Status e Alertas */
+            /* Status e Badges */
             --success: #10b981;
             --success-bg: rgba(16, 185, 129, 0.15);
             --success-border: rgba(16, 185, 129, 0.3);
-            
+
             --danger: #f43f5e;
+            --danger-hover: #fb7185;
             --danger-bg: rgba(244, 63, 94, 0.15);
             --danger-border: rgba(244, 63, 94, 0.3);
             
-            --info: #38bdf8;
-            --info-bg: rgba(56, 189, 248, 0.1);
-            --info-border: rgba(56, 189, 248, 0.25);
-            
             --radius-xl: 20px;
+            --radius-lg: 16px;
             --radius-md: 12px;
             --radius-sm: 6px;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -48,14 +51,23 @@
             line-height: 1.6;
             padding: 40px 24px;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             position: relative;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Iluminação de fundo customizada */
+        /* --- CANVAS EM MOVIMENTO (STARFIELD) --- */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Iluminação difusa de fundo */
         body::before {
             content: '';
             position: absolute;
@@ -63,16 +75,17 @@
             height: 600px;
             background: var(--primary);
             filter: blur(180px);
-            opacity: 0.1;
-            top: -150px;
-            left: -150px;
+            opacity: 0.12;
+            top: -200px;
+            left: -200px;
             pointer-events: none;
+            z-index: 1;
         }
 
-        /* --- CONTAINER MESTRE (GLASSMORPHISM) --- */
+        /* --- CONTAINER PRINCIPAL (GLASSMORPHISM) --- */
         .container {
             max-width: 1100px;
-            width: 100%;
+            margin: 0 auto;
             background-color: var(--bg-surface);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
@@ -81,422 +94,401 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
             z-index: 10;
+            position: relative;
+        }
+
+        /* Acessibilidade */
+        a:focus-visible, button:focus-visible {
+            outline: 2px solid #3b82f6;
+            outline-offset: 3px;
+        }
+
+        /* --- CABEÇALHO DA PÁGINA --- */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
         }
 
         h1 {
-            font-size: 1.8rem;
-            color: var(--text-main);
+            font-size: 1.65rem;
             font-weight: 700;
-            margin-bottom: 24px;
+            color: var(--text-main);
             letter-spacing: -0.5px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 14px;
         }
 
-        /* --- ALERTAS E INDICADORES --- */
-        .alert {
-            padding: 14px 16px;
+        /* --- ALERTAS E FEEDBACKS --- */
+        .alerta {
+            padding: 14px 18px;
             border-radius: var(--radius-md);
             margin-bottom: 24px;
-            font-size: 0.9rem;
             font-weight: 500;
+            font-size: 0.92rem;
             display: flex;
             align-items: center;
             gap: 12px;
             border: 1px solid transparent;
         }
-        .alert-success {
+
+        .alerta svg {
+            flex-shrink: 0;
+        }
+
+        .alerta-sucesso {
             background-color: var(--success-bg);
-            color: var(--success);
+            color: #a7f3d0;
             border-color: var(--success-border);
         }
 
-        .info-box {
-            background-color: var(--info-bg);
-            color: var(--info);
-            border: 1px solid var(--info-border);
-            padding: 10px 18px;
+        .alerta-erro {
+            background-color: var(--danger-bg);
+            color: #fca5a5;
+            border-color: var(--danger-border);
+        }
+
+        /* --- BOTÃO NOVO USUÁRIO --- */
+        .btn-novo {
+            padding: 11px 20px;
             border-radius: var(--radius-md);
-            margin-bottom: 24px;
             font-size: 0.9rem;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* --- BLOCO DE BUSCA E FILTROS --- */
-        .filter-form {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 16px;
-            background-color: rgba(15, 23, 42, 0.4);
-            padding: 20px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-            margin-bottom: 28px;
-        }
-
-        .filter-form input[type="text"] {
-            flex: 1;
-            min-width: 280px;
-            padding: 11px 16px;
-            font-size: 0.95rem;
-            color: var(--text-main);
-            background-color: rgba(15, 23, 42, 0.5);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            outline: none;
-            transition: var(--transition);
-        }
-
-        .filter-form input[type="text"]:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            font-size: 0.92rem;
-            color: var(--text-main);
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .checkbox-label input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        .btn-filter {
-            background-color: #334155;
-            color: #ffffff;
-            border: none;
-            padding: 11px 22px;
-            border-radius: var(--radius-md);
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.9rem;
             transition: var(--transition);
-        }
-
-        .btn-filter:hover {
-            background-color: #475569;
-        }
-
-        .btn-clear {
-            color: var(--text-muted);
+            border: none;
             text-decoration: none;
-            font-size: 0.92rem;
-            font-weight: 500;
-            transition: var(--transition);
-            margin-left: 4px;
-        }
-        .btn-clear:hover {
-            color: var(--danger);
-            text-decoration: underline;
-        }
-
-        /* --- LINKS E BOTÕES MESTRES --- */
-        a {
-            color: #3b82f6;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-        a:hover {
-            color: var(--text-main);
-            text-decoration: underline;
-        }
-
-        .btn-primary {
             display: inline-flex;
             align-items: center;
+            gap: 8px;
             background: var(--primary-gradient);
             color: #ffffff !important;
-            padding: 12px 22px;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 28px;
-            text-decoration: none !important;
             box-shadow: 0 4px 14px rgba(0, 102, 204, 0.25);
-            transition: var(--transition);
         }
-        .btn-primary:hover {
+
+        .btn-novo:hover {
             box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
             transform: translateY(-1px);
         }
 
-        /* --- TABELA DARK E ACABAMENTO --- */
-        .table-responsive {
+        .btn-novo:active {
+            transform: translateY(1px);
+        }
+
+        /* --- TABELA GERENCIAL --- */
+        .tabela-container {
+            background-color: rgba(15, 23, 42, 0.3);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
             overflow-x: auto;
             margin-bottom: 28px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            background-color: rgba(15, 23, 42, 0.3);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 0.95rem;
+            min-width: 700px;
         }
 
-        th, td {
-            padding: 16px 20px;
+        th {
+            background-color: rgba(15, 23, 42, 0.5);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 16px 24px;
             border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.92rem;
+            vertical-align: middle;
+            transition: background-color 0.15s ease;
         }
 
         tr:last-child td {
             border-bottom: none;
         }
 
-        th {
-            background-color: rgba(15, 23, 42, 0.6);
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-        }
-
         tr:hover td {
-            background-color: rgba(255, 255, 255, 0.03);
+            background-color: rgba(255, 255, 255, 0.02);
         }
 
-        code {
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            background-color: rgba(255, 255, 255, 0.06);
-            padding: 4px 8px;
-            border-radius: var(--radius-sm);
-            color: #e2e8f0;
+        .nome-usuario {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .email-usuario {
+            color: var(--text-muted);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
             font-size: 0.88rem;
         }
 
-        /* Badges Minimalistas */
+        /* Badges de Status e Perfil */
         .badge {
             display: inline-flex;
             align-items: center;
+            font-size: 0.75rem;
             padding: 4px 10px;
             border-radius: var(--radius-sm);
-            font-size: 0.78rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
-        .badge-active {
+
+        .badge-admin {
+            background-color: rgba(0, 102, 204, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .badge-operador {
+            background-color: rgba(71, 85, 105, 0.3);
+            color: #cbd5e1;
+            border: 1px solid rgba(203, 213, 225, 0.2);
+        }
+
+        .badge-ativo {
             background-color: var(--success-bg);
-            color: var(--success);
+            color: #a7f3d0;
             border: 1px solid var(--success-border);
         }
-        .badge-inactive {
-            background-color: var(--danger-bg);
-            color: var(--danger);
-            border: 1px solid var(--danger-border);
-        }
-        .badge-associado {
-            background-color: rgba(16, 185, 129, 0.1);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.25);
+
+        .badge-inativo {
+            background-color: rgba(71, 85, 105, 0.2);
+            color: #64748b;
+            border: 1px solid rgba(100, 116, 139, 0.3);
         }
 
-        /* Célula de Ações */
-        .actions-cell {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+        /* Links e Botões de Ação na Linha */
+        .btn-tabela-editar {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.88rem;
+            margin-right: 16px;
+            transition: var(--transition);
         }
 
-        .btn-toggle {
+        .btn-tabela-editar:hover {
+            color: #60a5fa;
+            text-decoration: underline;
+        }
+
+        .btn-toggle-status {
             background: none;
             border: none;
-            font-family: inherit;
-            font-size: 0.95rem;
+            font-weight: 600;
+            font-size: 0.88rem;
             cursor: pointer;
-            padding: 0;
+            padding: 4px 0;
+            font-family: inherit;
             transition: var(--transition);
-            font-weight: 500;
         }
-        .btn-toggle.deactivate {
+
+        .btn-toggle-status.acao-desativar {
             color: var(--danger);
         }
-        .btn-toggle.activate {
+
+        .btn-toggle-status.acao-desativar:hover {
+            color: var(--danger-hover);
+            text-decoration: underline;
+        }
+
+        .btn-toggle-status.acao-ativar {
             color: var(--success);
         }
-        .btn-toggle:hover {
+
+        .btn-toggle-status.acao-ativar:hover {
+            color: #34d399;
             text-decoration: underline;
-            filter: brightness(1.2);
         }
 
-        .empty-row {
-            text-align: center;
+        /* Rodapé */
+        .link-voltar {
             color: var(--text-muted);
-            padding: 40px !important;
-            font-style: italic;
-        }
-
-        .back-link {
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            margin-top: 16px;
-            color: var(--text-muted);
-            font-weight: 500;
+            transition: var(--transition);
+            margin-top: 8px;
         }
-        .back-link:hover {
+
+        .link-voltar:hover {
             color: var(--text-main);
         }
     </style>
 </head>
 <body>
 
+    <!-- CANVAS DO FUNDO EM MOVIMENTO -->
+    <canvas id="starfield"></canvas>
+
     <div class="container">
-        <h1>Clientes</h1>
-
-        <!-- Alertas Dinâmicos -->
-        {% if request.query_params.get('criado') == 'ok' %}
-            <div class="alert alert-success">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                Cliente cadastrado com sucesso!
-            </div>
-        {% endif %}
-        {% if request.query_params.get('editado') == 'ok' %}
-            <div class="alert alert-success">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                Cliente atualizado com sucesso!
-            </div>
-        {% endif %}
-
-        <!-- Box Informativo Superior -->
-        <div class="info-box">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span>Associados ativos: <strong>{{ total_associados }}</strong></span>
+        
+        <div class="page-header">
+            <h1>Controle de Usuários</h1>
+            <a href="/usuarios/novo" class="btn-novo">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Novo Usuário
+            </a>
         </div>
 
-        <!-- Bloco de Filtros -->
-        <form method="get" action="/clientes" class="filter-form">
-            <input type="text" 
-                   name="busca"
-                   placeholder="Buscar por nome ou matrícula..."
-                   value="{{ busca }}">
-            
-            <label class="checkbox-label">
-                <input type="checkbox" name="apenas_associados" value="true" {{ 'checked' if apenas_associados }}>
-                Apenas associados
-            </label>
-            
-            <button type="submit" class="btn-filter">Filtrar</button>
-            
-            {% if busca or apenas_associados %}
-                <a href="/clientes" class="btn-clear">Limpar filtros</a>
-            {% endif %}
-        </form>
+        {% if request.query_params.get('criado') == 'ok' %}
+            <div class="alerta alerta-sucesso">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Usuário cadastrado com sucesso!
+            </div>
+        {% endif %}
+        
+        {% if request.query_params.get('editado') == 'ok' %}
+            <div class="alerta alerta-sucesso">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Alterações salvas com sucesso!
+            </div>
+        {% endif %}
+        
+        {% if request.query_params.get('erro') == 'autoproprio' %}
+            <div class="alerta alerta-erro">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                Erro de segurança: Você não pode desativar sua própria conta conectada.
+            </div>
+        {% endif %}
 
-        <!-- Botão Novo -->
-        <a href="/clientes/novo" class="btn-primary">+ Novo cliente</a>
-
-        <!-- Grid de Clientes -->
-        <div class="table-responsive">
+        <div class="tabela-container">
             <table>
                 <thead>
                     <tr>
                         <th>Nome</th>
-                        <th>Matrícula</th>
-                        <th>Telefone</th>
-                        <th>Associado</th>
+                        <th>E-mail</th>
+                        <th>Perfil</th>
                         <th>Status</th>
-                        <th>Ações</th>
+                        <th style="width: 160px;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for c in clientes %}
+                    {% for u in usuarios %}
                     <tr>
-                        <td><strong style="color: var(--text-main);">{{ c.nome }}</strong></td>
+                        <td class="nome-usuario">{{ u.nome }}</td>
+                        <td class="email-usuario">{{ u.email }}</td>
                         <td>
-                            {% if c.matricula %}
-                                <code>{{ c.matricula }}</code>
+                            {% if u.role == 'admin' %}
+                                <span class="badge badge-admin">Administrador</span>
                             {% else %}
-                                <span style="color: var(--text-muted);">—</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ c.telefone or "—" }}</td>
-                        <td>
-                            {% if c.is_associado %}
-                                <span class="badge badge-associado">✓ Sim (10% desc.)</span>
-                            {% else %}
-                                <span style="color: var(--text-muted); font-size: 0.9rem;">Não</span>
+                                <span class="badge badge-operador">Operador</span>
                             {% endif %}
                         </td>
                         <td>
-                            {% if c.ativo %}
-                                <span class="badge badge-active">Ativo</span>
+                            {% if u.ativo %}
+                                <span class="badge badge-ativo">Ativo</span>
                             {% else %}
-                                <span class="badge badge-inactive">Inativo</span>
+                                <span class="badge badge-inativo">Inativo</span>
                             {% endif %}
                         </td>
                         <td>
-                            <div class="actions-cell">
-                                <a href="/clientes/{{ c.id }}/editar">Editar</a>
-                                <form action="/clientes/{{ c.id }}/toggle-ativo" method="post" style="display:inline">
-                                    <button type="submit" class="btn-toggle {{ 'deactivate' if c.ativo else 'activate' }}">
-                                        {{ "Desativar" if c.ativo else "Ativar" }}
-                                    </button>
-                                </form>
-                            </div>
+                            <a href="/usuarios/{{ u.id }}/editar" class="btn-tabela-editar">Editar</a>
+
+                            <form action="/usuarios/{{ u.id }}/toggle-ativo"
+                                  method="post"
+                                  style="display:inline"
+                                  onsubmit="return confirm('Deseja alterar o status de acesso para {{ u.nome }}?')">
+                                
+                                {% if u.ativo %}
+                                    <button type="submit" class="btn-toggle-status acao-desativar">Desativar</button>
+                                {% else %}
+                                    <button type="submit" class="btn-toggle-status acao-ativar">Ativar</button>
+                                {% endif %}
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
-                    
-                    {% if not clientes %}
-                    <tr>
-                        <td colspan="6" class="empty-row">Nenhum cliente encontrado.</td>
-                    </tr>
-                    {% endif %}
                 </tbody>
             </table>
         </div>
-        <!-- --- BARRA DE PAGINAÇÃO --- -->
-            {% if total_paginas > 1 %}
-            <div class="paginacao-container">
-                <div class="paginacao-info">
-                    Página <strong>{{ pagina_atual }}</strong> de <strong>{{ total_paginas }}</strong>
-                </div>
 
-                <div class="paginacao-botoes">
-                    <!-- Botão Anterior -->
-                    <a href="/produtos?pagina={{ pagina_atual - 1 }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
-                       class="page-link {{ 'disabled' if pagina_atual <= 1 else '' }}">
-                        Anterior
-                    </a>
-
-                    <!-- Links Numéricos (1, 2, 3...) -->
-                    {% for p in range(1, total_paginas + 1) %}
-                        <a href="/produtos?pagina={{ p }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
-                           class="page-link {{ 'active' if p == pagina_atual else '' }}">
-                            {{ p }}
-                        </a>
-                    {% endfor %}
-
-                    <!-- Botão Próximo -->
-                    <a href="/produtos?pagina={{ pagina_atual + 1 }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
-                       class="page-link {{ 'disabled' if pagina_atual >= total_paginas else '' }}">
-                        Proximo
-                    </a>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-
-        <!-- Link Voltar -->
-        <p><a href="/" class="back-link">← Voltar para o Dashboard</a></p>
+        <p>
+            <a href="/" class="link-voltar">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 
+                Voltar para o Dashboard
+            </a>
+        </p>
     </div>
 
+    <!-- SCRIPT DA ANIMAÇÃO DE FUNDO -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('starfield');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+            const numStars = 700;
+            const speed = 2.5;
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function createStars() {
+                stars = [];
+                for (let i = 0; i < numStars; i++) {
+                    stars.push({
+                        x: (Math.random() - 0.5) * canvas.width,
+                        y: (Math.random() - 0.5) * canvas.height,
+                        z: Math.random() * canvas.width
+                    });
+                }
+            }
+
+            function updateAndDraw() {
+                ctx.fillStyle = "rgba(15, 23, 42, 0.35)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+
+                stars.forEach(star => {
+                    star.z -= speed;
+
+                    if (star.z <= 0) {
+                        star.z = canvas.width;
+                        star.x = (Math.random() - 0.5) * canvas.width;
+                        star.y = (Math.random() - 0.5) * canvas.height;
+                    }
+
+                    const k = 256 / star.z;
+                    const px = star.x * k + cx;
+                    const py = star.y * k + cy;
+
+                    if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+                        const size = (1 - star.z / canvas.width) * 2.2;
+                        
+                        ctx.fillStyle = "rgba(226, 232, 240, 0.9)";
+                        ctx.beginPath();
+                        ctx.arc(px, py, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+
+                requestAnimationFrame(updateAndDraw);
+            }
+
+            createStars();
+            updateAndDraw();
+        });
+    </script>
 </body>
 </html>

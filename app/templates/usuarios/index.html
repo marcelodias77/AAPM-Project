@@ -4,32 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuários — AAPM SENAI</title>
+    <!-- Fontes Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- DESIGN SYSTEM MODERNIZADO (DARK MODE) --- */
+        /* --- DESIGN SYSTEM MODERNIZADO (DARK-PREMIUM GLASSMORPHISM) --- */
         :root {
             --primary: #0066cc;       /* Azul Institucional SENAI */
-            --primary-hover: #004da3;
-            --bg-base: #0f172a;       /* Fundo Dark Slate idêntico ao Dashboard */
-            --bg-surface: #1e293b;    /* Fundo do Card/Tabela */
+            --primary-gradient: linear-gradient(135deg, #0066cc, #3b82f6);
+            --bg-base: #0f172a;       /* Fundo Dark Slate */
+            --bg-surface: rgba(30, 41, 59, 0.7); /* Vidro fosco card */
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
             
-            /* Status */
+            /* Status e Badges */
             --success: #10b981;
-            --success-bg: rgba(16, 185, 129, 0.12);
+            --success-bg: rgba(16, 185, 129, 0.15);
+            --success-border: rgba(16, 185, 129, 0.3);
+
             --danger: #f43f5e;
-            --danger-hover: #e11d48;
-            --danger-bg: rgba(244, 63, 94, 0.12);
+            --danger-hover: #fb7185;
+            --danger-bg: rgba(244, 63, 94, 0.15);
+            --danger-border: rgba(244, 63, 94, 0.3);
             
+            --radius-xl: 20px;
             --radius-lg: 16px;
             --radius-md: 12px;
             --radius-sm: 6px;
-            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* --- CONFIGURAÇÕES GERAIS --- */
@@ -44,18 +49,57 @@
             background-color: var(--bg-base);
             color: var(--text-main);
             line-height: 1.6;
-            padding: 40px 20px;
+            padding: 40px 24px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
+        /* --- CANVAS EM MOVIMENTO (STARFIELD) --- */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Iluminação difusa de fundo */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: var(--primary);
+            filter: blur(180px);
+            opacity: 0.12;
+            top: -200px;
+            left: -200px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* --- CONTAINER PRINCIPAL (GLASSMORPHISM) --- */
         .container {
             max-width: 1100px;
             margin: 0 auto;
+            background-color: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 40px 36px;
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            position: relative;
         }
 
         /* Acessibilidade */
         a:focus-visible, button:focus-visible {
-            outline: 2px solid var(--primary);
+            outline: 2px solid #3b82f6;
             outline-offset: 3px;
         }
 
@@ -65,10 +109,12 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 28px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
         }
 
         h1 {
-            font-size: 1.6rem;
+            font-size: 1.65rem;
             font-weight: 700;
             color: var(--text-main);
             letter-spacing: -0.5px;
@@ -93,19 +139,19 @@
 
         .alerta-sucesso {
             background-color: var(--success-bg);
-            color: var(--success);
-            border-color: rgba(16, 185, 129, 0.15);
+            color: #a7f3d0;
+            border-color: var(--success-border);
         }
 
         .alerta-erro {
             background-color: var(--danger-bg);
-            color: var(--danger);
-            border-color: rgba(244, 63, 94, 0.15);
+            color: #fca5a5;
+            border-color: var(--danger-border);
         }
 
         /* --- BOTÃO NOVO USUÁRIO --- */
         .btn-novo {
-            padding: 10px 20px;
+            padding: 11px 20px;
             border-radius: var(--radius-md);
             font-size: 0.9rem;
             font-weight: 600;
@@ -116,27 +162,26 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background-color: var(--primary);
+            background: var(--primary-gradient);
             color: #ffffff !important;
-            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.25);
+            box-shadow: 0 4px 14px rgba(0, 102, 204, 0.25);
         }
 
         .btn-novo:hover {
-            background-color: var(--primary-hover);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
             transform: translateY(-1px);
         }
 
         .btn-novo:active {
-            transform: translateY(0);
+            transform: translateY(1px);
         }
 
         /* --- TABELA GERENCIAL --- */
         .tabela-container {
-            background: var(--bg-surface);
-            border-radius: var(--radius-lg);
+            background-color: rgba(15, 23, 42, 0.3);
+            border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-            overflow-x: auto; /* Garante rolagem em telas pequenas */
+            overflow-x: auto;
             margin-bottom: 28px;
         }
 
@@ -144,14 +189,14 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            min-width: 700px; /* Impede esmagamento de colunas em mobile */
+            min-width: 700px;
         }
 
         th {
-            background-color: rgba(15, 23, 42, 0.3);
+            background-color: rgba(15, 23, 42, 0.5);
             color: var(--text-muted);
             font-weight: 600;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             padding: 16px 24px;
@@ -160,8 +205,8 @@
 
         td {
             padding: 16px 24px;
-            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
-            font-size: 0.95rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.92rem;
             vertical-align: middle;
             transition: background-color 0.15s ease;
         }
@@ -190,35 +235,40 @@
             display: inline-flex;
             align-items: center;
             font-size: 0.75rem;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            text-transform: uppercase;
             letter-spacing: 0.3px;
         }
 
         .badge-admin {
-            background-color: rgba(0, 102, 204, 0.15);
+            background-color: rgba(0, 102, 204, 0.2);
             color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
         }
 
         .badge-operador {
             background-color: rgba(71, 85, 105, 0.3);
             color: #cbd5e1;
+            border: 1px solid rgba(203, 213, 225, 0.2);
         }
 
         .badge-ativo {
             background-color: var(--success-bg);
-            color: var(--success);
+            color: #a7f3d0;
+            border: 1px solid var(--success-border);
         }
 
         .badge-inativo {
             background-color: rgba(71, 85, 105, 0.2);
             color: #64748b;
+            border: 1px solid rgba(100, 116, 139, 0.3);
         }
 
         /* Links e Botões de Ação na Linha */
         .btn-tabela-editar {
-            color: #38bdf8;
+            color: #3b82f6;
             text-decoration: none;
             font-weight: 600;
             font-size: 0.88rem;
@@ -227,7 +277,7 @@
         }
 
         .btn-tabela-editar:hover {
-            color: var(--primary);
+            color: #60a5fa;
             text-decoration: underline;
         }
 
@@ -256,6 +306,7 @@
         }
 
         .btn-toggle-status.acao-ativar:hover {
+            color: #34d399;
             text-decoration: underline;
         }
 
@@ -264,11 +315,12 @@
             color: var(--text-muted);
             text-decoration: none;
             font-weight: 500;
+            font-size: 0.95rem;
             display: inline-flex;
             align-items: center;
             gap: 6px;
             transition: var(--transition);
-            padding: 6px 0;
+            margin-top: 8px;
         }
 
         .link-voltar:hover {
@@ -277,6 +329,9 @@
     </style>
 </head>
 <body>
+
+    <!-- CANVAS DO FUNDO EM MOVIMENTO -->
+    <canvas id="starfield"></canvas>
 
     <div class="container">
         
@@ -360,8 +415,80 @@
             </table>
         </div>
 
-        <p><a href="/" class="link-voltar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Voltar para o Dashboard</a></p>
+        <p>
+            <a href="/" class="link-voltar">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 
+                Voltar para o Dashboard
+            </a>
+        </p>
     </div>
 
+    <!-- SCRIPT DA ANIMAÇÃO DE FUNDO -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('starfield');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+            const numStars = 700;
+            const speed = 2.5;
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function createStars() {
+                stars = [];
+                for (let i = 0; i < numStars; i++) {
+                    stars.push({
+                        x: (Math.random() - 0.5) * canvas.width,
+                        y: (Math.random() - 0.5) * canvas.height,
+                        z: Math.random() * canvas.width
+                    });
+                }
+            }
+
+            function updateAndDraw() {
+                ctx.fillStyle = "rgba(15, 23, 42, 0.35)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+
+                stars.forEach(star => {
+                    star.z -= speed;
+
+                    if (star.z <= 0) {
+                        star.z = canvas.width;
+                        star.x = (Math.random() - 0.5) * canvas.width;
+                        star.y = (Math.random() - 0.5) * canvas.height;
+                    }
+
+                    const k = 256 / star.z;
+                    const px = star.x * k + cx;
+                    const py = star.y * k + cy;
+
+                    if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+                        const size = (1 - star.z / canvas.width) * 2.2;
+                        
+                        ctx.fillStyle = "rgba(226, 232, 240, 0.9)";
+                        ctx.beginPath();
+                        ctx.arc(px, py, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+
+                requestAnimationFrame(updateAndDraw);
+            }
+
+            createStars();
+            updateAndDraw();
+        });
+    </script>
 </body>
 </html>

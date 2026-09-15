@@ -356,6 +356,7 @@
     <!-- CANVAS DO FUNDO EM MOVIMENTO -->
     <canvas id="starfield"></canvas>
 
+
     <!-- SIDEBAR PERSISTENTE -->
     <aside class="sidebar">
         <a href="#" class="brand-box">
@@ -368,7 +369,7 @@
             <a href="/categorias" class="nav-link">🏷️ Categorias</a>
             <a href="/movimentacoes" class="nav-link">🔁 Movimentações</a>
             <a href="/clientes" class="nav-link">🙎‍♂️ Clientes</a>
-            {% if usuario.role == 'admin' %}
+            {% if usuario and usuario.role == 'admin' %}
             <a href="/usuarios" class="nav-link">👥 Usuários</a>
             {% endif %}
         </nav>
@@ -479,7 +480,7 @@
             </a>
 
             <!-- CARD CONDICIONAL: USUÁRIOS -->
-            {% if usuario.role == 'admin' %}
+            {% if usuario and usuario.role == 'admin' %}
             <a href="/usuarios" class="card-item">
                 <div>
                     <div class="card-icon-wrapper">

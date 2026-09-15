@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movimentações — AAPM SENAI</title>
+    <!-- Fontes Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         /* --- DESIGN SYSTEM MODERNIZADO (DARK-PREMIUM) --- */
         :root {
@@ -48,6 +53,17 @@
             overflow-x: hidden;
         }
 
+        /* --- CANVAS EM MOVIMENTO (STARFIELD) --- */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
         /* Iluminação de fundo */
         body::before {
             content: '';
@@ -56,10 +72,11 @@
             height: 600px;
             background: var(--primary);
             filter: blur(180px);
-            opacity: 0.08;
+            opacity: 0.12;
             top: -200px;
             left: -200px;
             pointer-events: none;
+            z-index: 1;
         }
 
         /* --- CONTAINER PRINCIPAL (GLASSMORPHISM) --- */
@@ -245,7 +262,7 @@
 
         /* Código e Valores */
         .monospace {
-            font-family: ui-monospace, SFMono-Regular, Menlos, Consolas, monospace;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
             font-size: 0.88rem;
         }
 
@@ -269,7 +286,7 @@
             text-decoration: none;
         }
 
-        /* --- ESTILOS DE PAGINAÇÃO (INTEGRADO AO DARK-PREMIUM) --- */
+        /* --- ESTILOS DE PAGINAÇÃO --- */
         .paginacao-container {
             display: flex;
             align-items: center;
@@ -334,6 +351,9 @@
     </style>
 </head>
 <body>
+
+    <!-- CANVAS DO FUNDO EM MOVIMENTO -->
+    <canvas id="starfield"></canvas>
 
     <div class="container">
         <h1>Histórico de movimentações</h1>
@@ -452,5 +472,72 @@
         <p><a href="/" class="back-link">← Voltar para o Dashboard</a></p>
     </div>
 
+    <!-- SCRIPT DA ANIMAÇÃO DE FUNDO -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('starfield');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+            const numStars = 700;
+            const speed = 2.5;
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function createStars() {
+                stars = [];
+                for (let i = 0; i < numStars; i++) {
+                    stars.push({
+                        x: (Math.random() - 0.5) * canvas.width,
+                        y: (Math.random() - 0.5) * canvas.height,
+                        z: Math.random() * canvas.width
+                    });
+                }
+            }
+
+            function updateAndDraw() {
+                ctx.fillStyle = "rgba(15, 23, 42, 0.35)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+
+                stars.forEach(star => {
+                    star.z -= speed;
+
+                    if (star.z <= 0) {
+                        star.z = canvas.width;
+                        star.x = (Math.random() - 0.5) * canvas.width;
+                        star.y = (Math.random() - 0.5) * canvas.height;
+                    }
+
+                    const k = 256 / star.z;
+                    const px = star.x * k + cx;
+                    const py = star.y * k + cy;
+
+                    if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+                        const size = (1 - star.z / canvas.width) * 2.2;
+                        
+                        ctx.fillStyle = "rgba(226, 232, 240, 0.9)";
+                        ctx.beginPath();
+                        ctx.arc(px, py, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+
+                requestAnimationFrame(updateAndDraw);
+            }
+
+            createStars();
+            updateAndDraw();
+        });
+    </script>
 </body>
 </html>

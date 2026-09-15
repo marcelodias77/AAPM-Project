@@ -25,7 +25,7 @@
         </tr>
         <tr>
             <td><strong>Status</strong></td>
-            <td>
+            {% if usuario and usuario.role == 'admin' %}
                 {% if armario.status.value == 'disponivel' %}
                     <span style="color:green">● Disponível</span>
                 {% elif armario.status.value == 'alugado' %}
