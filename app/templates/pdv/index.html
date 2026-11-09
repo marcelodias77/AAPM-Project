@@ -748,7 +748,6 @@
     {% if erro == 'vazio' %}Carrinho vazio. Adicione produtos antes de finalizar.
     {% elif erro == 'estoque' %}Estoque insuficiente para: {{ request.query_params.get('produto') }}
     {% elif erro == 'quantidade' %}Quantidade inválida.
-    {% elif erro == 'pagamento' %}Valores informados no pagamento são incompatíveis com o total.
     {% else %}Ocorreu um erro. Tente novamente.
     {% endif %}
 </div>
@@ -812,11 +811,13 @@
             </div>
 
             <div class="paginacao-botoes">
+                <!-- Botão Anterior -->
                 <a href="/produtos?pagina={{ pagina_atual - 1 }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
                    class="page-link {{ 'disabled' if pagina_atual <= 1 else '' }}">
                     Anterior
                 </a>
 
+                <!-- Links Numéricos (1, 2, 3...) -->
                 {% for p in range(1, total_paginas + 1) %}
                     <a href="/produtos?pagina={{ p }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
                        class="page-link {{ 'active' if p == pagina_atual else '' }}">
@@ -824,9 +825,10 @@
                     </a>
                 {% endfor %}
 
+                <!-- Botão Próximo -->
                 <a href="/produtos?pagina={{ pagina_atual + 1 }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
                    class="page-link {{ 'disabled' if pagina_atual >= total_paginas else '' }}">
-                    Próximo
+                    Proximo
                 </a>
             </div>
         </div>
@@ -1014,7 +1016,6 @@
                 </div>
             </div>
 
-            <!-- OPÇÃO PARA SALVAR O CARTÃO -->
             <label class="save-card-option">
                 <input type="checkbox" id="save-card-check" checked>
                 <span>Salvar cartão para futuras compras</span>
@@ -1060,15 +1061,24 @@
         }
     }
 
+    function filtrarProdutos() {
+        const termo = document.getElementById('busca-produto').value.toLowerCase().trim();
+        const cards = document.querySelectorAll('.produto-card');
+
+        cards.forEach(card => {
+            const nome = (card.dataset.nomeLower || '').toLowerCase();
+            card.style.display = nome.includes(termo) ? 'flex' : 'none';
+        });
+    }
+
     function adicionarAoCarrinho(card) {
         const id = card.dataset.id;
         const nome = card.dataset.nome;
         const preco = parseFloat(card.dataset.preco);
         const estoque = parseInt(card.dataset.estoque);
-        
+
         const inputQtd = document.getElementById(`input-qtd-${id}`);
         const qtdAdicionar = parseInt(inputQtd ? inputQtd.value : 1);
-
         const itemExistente = carrinho.find(item => item.id == id);
         const qtdAtualNoCarrinho = itemExistente ? itemExistente.quantidade : 0;
 
@@ -1090,7 +1100,6 @@
         renderizarCarrinho();
     }
 
-    // --- FUNÇÃO DO + E DO - NO CARRINHO ---
     function alterarQtdItemCarrinho(id, delta) {
         const item = carrinho.find(i => i.id == id);
         if (!item) return;
@@ -1117,7 +1126,7 @@
     function atualizarCliente(select) {
         const option = select.options[select.selectedIndex];
         clienteAssociado = option.dataset.associado === 'true';
-        
+
         document.getElementById('badge-desconto').style.display = clienteAssociado ? 'inline-flex' : 'none';
         document.getElementById('input-cliente-id').value = select.value;
         renderizarCarrinho();
@@ -1171,15 +1180,14 @@
 
         cartCount.textContent = `${totalItens} ${totalItens === 1 ? 'item' : 'itens'}`;
 
-        let valorDescontoAssoc = clienteAssociado ? (subtotal * DESCONTO_ASSOCIADO_PCT) : 0;
-        let valManualInput = parseFloat(document.getElementById('desconto-manual').value) || 0;
-        
-        let totalTemp = subtotal - valorDescontoAssoc;
-        let valorDescontoManual = Math.min(valManualInput, totalTemp);
-        let totalFinal = Math.max(0, totalTemp - valorDescontoManual);
+        const valorDescontoAssoc = clienteAssociado ? (subtotal * DESCONTO_ASSOCIADO_PCT) : 0;
+        const valManualInput = parseFloat(document.getElementById('desconto-manual').value) || 0;
+        const totalTemp = subtotal - valorDescontoAssoc;
+        const valorDescontoManual = Math.min(valManualInput, totalTemp);
+        const totalFinal = Math.max(0, totalTemp - valorDescontoManual);
 
         document.getElementById('val-subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
-        
+
         const linhaDescontoAssoc = document.getElementById('linha-desconto-assoc');
         if (clienteAssociado && valorDescontoAssoc > 0) {
             linhaDescontoAssoc.style.display = 'flex';
@@ -1202,30 +1210,20 @@
         const inputPag1 = document.getElementById('valor-pagamento-1');
         const inputPag2 = document.getElementById('valor-pagamento-2');
         const valPag2 = parseFloat(inputPag2.value) || 0;
-        
-        inputPag1.value = Math.max(0, totalFinal - valPag2).toFixed(2);
+        const valorAtualPag1 = parseFloat(inputPag1.value) || 0;
+
+        if (valorAtualPag1 <= 0 || inputPag1.value === '') {
+            inputPag1.value = Math.max(0, totalFinal - valPag2).toFixed(2);
+        }
+
         btnFinalizar.disabled = false;
-    }
-
-    function filtrarProdutos() {
-        const termo = document.getElementById('busca-produto').value.toLowerCase().trim();
-        const cards = document.querySelectorAll('.produto-card');
-
-        cards.forEach(card => {
-            const nome = card.dataset.nomeLower;
-            if (nome.includes(termo)) {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
-            }
-        });
     }
 
     function obterPagamentosFormulados() {
         const pagamentos = [];
         const m1 = document.getElementById('metodo-pagamento-1').value;
         const v1 = parseFloat(document.getElementById('valor-pagamento-1').value) || 0;
-        
+
         const m2 = document.getElementById('metodo-pagamento-2').value;
         const v2 = parseFloat(document.getElementById('valor-pagamento-2').value) || 0;
 
@@ -1235,36 +1233,30 @@
         return pagamentos;
     }
 
-    // --- LÓGICA DE PROCESSAMENTO E EXIBIÇÃO DE MODAIS ---
     function processarFinalizacao() {
         if (carrinho.length === 0) return;
 
         const pagamentos = obterPagamentosFormulados();
-        
         const possuiPix = pagamentos.some(p => p.metodo === 'PIX');
         const possuiCartao = pagamentos.some(p => ['CARTAO_DEBITO', 'CARTAO_CREDITO'].includes(p.metodo));
         const possuiDinheiro = pagamentos.some(p => p.metodo === 'DINHEIRO');
 
         if (possuiCartao) {
             abrirModalCartao();
-        } 
-        else if (possuiDinheiro) {
-            alert("Aparece na sala da Gidalva para pagar");
+        } else if (possuiDinheiro) {
+            alert('Aparece na sala da Gidalva para pagar');
             if (possuiPix) {
                 abrirModalPix();
             } else {
-                window.location.reload();
+                submeterFormularioVenda();
             }
-        } 
-        else if (possuiPix) {
+        } else if (possuiPix) {
             abrirModalPix();
-        } 
-        else {
+        } else {
             submeterFormularioVenda();
         }
     }
 
-    /* Modal Cartão & Carregamento de Dados Salvos */
     function abrirModalCartao() {
         const cartaoSalvo = localStorage.getItem('pdv_cartao_salvo');
         if (cartaoSalvo) {
@@ -1273,7 +1265,9 @@
                 document.getElementById('card-num').value = dados.num || '';
                 document.getElementById('card-name').value = dados.nome || '';
                 document.getElementById('card-expiry').value = dados.validade || '';
-            } catch(e) {}
+            } catch (e) {
+                // ignora dados inválidos do localStorage
+            }
         }
         document.getElementById('modal-cartao').classList.add('active');
     }
@@ -1298,7 +1292,7 @@
 
     function confirmarPagamentoCartao(e) {
         e.preventDefault();
-        
+
         const deveSalvar = document.getElementById('save-card-check').checked;
         if (deveSalvar) {
             const dadosCartao = {
@@ -1310,32 +1304,30 @@
         }
 
         fecharModalCartao();
-        alert("Pagamento com cartão aprovado e processado com sucesso!");
-        
+        alert('Pagamento com cartão aprovado e processado com sucesso!');
+
         const pagamentos = obterPagamentosFormulados();
         if (pagamentos.some(p => p.metodo === 'PIX')) {
             abrirModalPix();
         } else {
-            window.location.reload();
+            submeterFormularioVenda();
         }
     }
 
-    /* Modal PIX */
     function abrirModalPix() {
         const modal = document.getElementById('modal-pix');
         const imgQr = document.getElementById('img-qr-pix');
-        
+
         const pagamentos = obterPagamentosFormulados();
         const pagPix = pagamentos.find(p => p.metodo === 'PIX');
-        const valorPix = pagPix ? pagPix.valor.toFixed(2) : "0.00";
+        const valorPix = pagPix ? pagPix.valor : 0;
 
-        const qrData = encodeURIComponent(`PIX:${CHAVE_PIX}|VALOR:${valorPix}`);
+        const qrData = encodeURIComponent(`PIX:${CHAVE_PIX}|VALOR:${valorPix.toFixed(2)}`);
         imgQr.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${qrData}`;
-        
-        document.getElementById('pix-copiacola').textContent = CHAVE_PIX;
 
+        document.getElementById('pix-copiacola').textContent = CHAVE_PIX;
         modal.classList.add('active');
-        
+
         let tempoRestante = 300;
         const displayTimer = document.getElementById('pix-timer');
 
@@ -1344,11 +1336,13 @@
             let minutos = Math.floor(tempoRestante / 60);
             let segundos = tempoRestante % 60;
             displayTimer.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
-            
-            if (--tempoRestante < 0) {
+
+            if (tempoRestante <= 0) {
                 fecharModalPix();
                 alert('Tempo de pagamento PIX expirado!');
+                return;
             }
+            tempoRestante -= 1;
         }, 1000);
     }
 
@@ -1368,6 +1362,7 @@
         const obs = document.getElementById('obs-input').value;
 
         document.getElementById('input-carrinho').value = JSON.stringify(carrinho);
+        document.getElementById('input-cliente-id').value = document.getElementById('select-cliente').value;
         document.getElementById('input-desconto-manual').value = descManual;
         document.getElementById('input-observacao').value = obs;
         document.getElementById('input-pagamentos-json').value = JSON.stringify(pagamentos);
