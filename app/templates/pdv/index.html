@@ -688,7 +688,19 @@
         .pix-qrcode { width: 180px; height: 180px; background: #fff; padding: 10px; border-radius: 12px; border: 1px solid var(--border-color); }
         .pix-qrcode img { width: 100%; height: 100%; }
         .pix-copiacola { background: #0f172a; border: 1px solid var(--border-color); padding: 8px; border-radius: var(--radius-sm); font-size: 11px; font-family: monospace; color: var(--text-muted); width: 100%; word-break: break-all; }
+
+        /* Estilos Form Cartão */
+        .card-form { text-align: left; display: flex; flex-direction: column; gap: 12px; }
+        .card-form .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .card-form label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .card-form input[type="text"], .card-form input[type="password"] { padding: 10px; background: #0f172a; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 13px; color: var(--text-main); outline: none; }
+        .card-form input[type="text"]:focus, .card-form input[type="password"]:focus { border-color: var(--border-focus); }
+        .card-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         
+        .save-card-option { display: flex; align-items: center; gap: 8px; margin-top: 4px; cursor: pointer; }
+        .save-card-option input[type="checkbox"] { accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer; }
+        .save-card-option span { font-size: 12px; color: var(--text-main); font-weight: 500; }
+
         .paginacao-container {
             display: flex;
             align-items: center;
@@ -923,38 +935,36 @@
 
             <form id="form-venda" action="/pdv/finalizar" method="post">
                 <input type="hidden" name="carrinho_json" id="input-carrinho">
-                <input type="hidden" name="cliente_id"   id="input-cliente-id" value="0">
-                <input type="hidden" name="observacao"   id="input-obs">
-                
+                <input type="hidden" name="cliente_id" id="input-cliente-id" value="0">
                 <input type="hidden" name="desconto_manual" id="input-desconto-manual" value="0">
-                <input type="hidden" name="pagamentos_json"  id="input-pagamentos-json">
+                <input type="hidden" name="observacao" id="input-observacao" value="">
+                <input type="hidden" name="pagamentos_json" id="input-pagamentos-json" value="[]">
 
-                <button class="btn-finalizar"
-                        id="btn-finalizar"
-                        type="button"
-                        disabled
-                        onclick="finalizarVenda()">
-                    <span>Finalizar Venda</span>
-                    <span class="kbd-badge" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.2); color:#fff;">F9</span>
+                <button type="button" 
+                        class="btn-finalizar" 
+                        id="btn-finalizar" 
+                        disabled 
+                        onclick="processarFinalizacao()">
+                    <span>⚡ Finalizar Venda</span>
+                    <span class="kbd-badge" style="position:static; transform:none; background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.2); color:#fff;">F9</span>
                 </button>
             </form>
         </div>
     </aside>
 </div>
 
-<!-- Modal de Atalhos -->
+<!-- Modal Atalhos -->
 <div class="modal-overlay" id="modal-atalhos">
     <div class="modal-box">
         <div class="modal-title">
             <span>⌨️ Atalhos do Teclado</span>
-            <button class="modal-close" onclick="toggleModalAtalhos()">×</button>
+            <button class="modal-close" onclick="toggleModalAtalhos()">✕</button>
         </div>
-        <div class="atalho-row"><span>Ajuda / Atalhos</span><kbd>F1</kbd></div>
         <div class="atalho-row"><span>Buscar Produto</span><kbd>F2</kbd></div>
         <div class="atalho-row"><span>Selecionar Cliente</span><kbd>F4</kbd></div>
-        <div class="atalho-row"><span>Campo Observação</span><kbd>F8</kbd></div>
+        <div class="atalho-row"><span>Observação</span><kbd>F8</kbd></div>
         <div class="atalho-row"><span>Finalizar Venda</span><kbd>F9</kbd></div>
-        <div class="atalho-row"><span>Fechar Ajuda / Telas</span><kbd>Esc</kbd></div>
+        <div class="atalho-row"><span>Fechar Modais</span><kbd>Esc</kbd></div>
     </div>
 </div>
 
@@ -963,352 +973,436 @@
     <div class="modal-box">
         <div class="modal-title">
             <span>📱 Pagamento via PIX</span>
-            <button class="modal-close" onclick="fecharModalPix()">×</button>
+            <button class="modal-close" onclick="fecharModalPix()">✕</button>
         </div>
         <div class="pix-container">
-            <div>Escaneie o QR Code abaixo para pagar</div>
             <div class="pix-timer" id="pix-timer">05:00</div>
-            
             <div class="pix-qrcode">
-                <img id="pix-qrcode-img" src="" alt="QR Code PIX">
+                <img id="img-qr-pix" src="" alt="QR Code PIX">
             </div>
-
-            <div style="font-size: 11px; color: var(--text-muted)">Valor do PIX: <strong id="pix-modal-valor" style="color: #fff">R$ 0,00</strong></div>
-            <div class="pix-copiacola" id="pix-copiacola-text">00020126360014BR.GOV.BCB.PIX...</div>
-            
-            <button type="button" class="btn-finalizar" style="margin-top: 10px;" onclick="confirmarEEnviarVenda()">
-                ✓ Confirmar Pagamento Recebido
-            </button>
+            <p style="font-size:12px; color:var(--text-muted);">Chave PIX: <strong>11951313066</strong></p>
+            <div class="pix-copiacola" id="pix-copiacola">11951313066</div>
+            <button class="btn-add-card" style="width:100%" onclick="confirmarPagamentoPix()">✓ Confirmar Recebimento</button>
         </div>
     </div>
 </div>
 
+<!-- Modal Pagamento com Cartão com Opção de Salvar -->
+<div class="modal-overlay" id="modal-cartao">
+    <div class="modal-box">
+        <div class="modal-title">
+            <span>💳 Pagamento com Cartão</span>
+            <button class="modal-close" onclick="fecharModalCartao()">✕</button>
+        </div>
+        <form class="card-form" onsubmit="confirmarPagamentoCartao(event)">
+            <div class="form-group">
+                <label>Número do Cartão</label>
+                <input type="text" id="card-num" placeholder="0000 0000 0000 0000" maxlength="19" required oninput="mascaraCartao(this)">
+            </div>
+            <div class="form-group">
+                <label>Nome no Cartão</label>
+                <input type="text" id="card-name" placeholder="NOME IMPRESSO NO CARTÃO" required style="text-transform: uppercase;">
+            </div>
+            <div class="card-form-row">
+                <div class="form-group">
+                    <label>Validade</label>
+                    <input type="text" id="card-expiry" placeholder="MM/AA" maxlength="5" required oninput="mascaraValidade(this)">
+                </div>
+                <div class="form-group">
+                    <label>CVV</label>
+                    <input type="password" id="card-cvv" placeholder="123" maxlength="4" required>
+                </div>
+            </div>
+
+            <!-- OPÇÃO PARA SALVAR O CARTÃO -->
+            <label class="save-card-option">
+                <input type="checkbox" id="save-card-check" checked>
+                <span>Salvar cartão para futuras compras</span>
+            </label>
+
+            <button type="submit" class="btn-add-card" style="width:100%; margin-top:10px; padding:12px;">
+                ✓ Confirmar Pagamento
+            </button>
+        </form>
+    </div>
+</div>
+
 <script>
-// ============================================================
-// Estado da Aplicação
-// ============================================================
-let carrinho = [];
-let clienteAtual = { id: 0, associado: false };
-const DESCONTO_PCT = parseFloat("{{ desconto_associado | default(0) }}");
-let pixTimerInterval = null;
+    let carrinho = [];
+    const DESCONTO_ASSOCIADO_PCT = parseFloat("{{ desconto_associado | default(10) }}") / 100;
+    let clienteAssociado = false;
+    let pixTimerInterval = null;
+    const CHAVE_PIX = "11951313066";
 
-// ============================================================
-// Lógica de Produtos / Cards
-// ============================================================
-function ajustarQtdCard(id, delta) {
-    const input = document.getElementById(`input-qtd-${id}`);
-    if (!input) return;
-    let val = parseInt(input.value) || 1;
-    const max = parseInt(input.max) || 999;
-    
-    val += delta;
-    if (val < 1) val = 1;
-    if (val > max) val = max;
-    
-    input.value = val;
-}
-
-function validarQtdCard(input, max) {
-    let val = parseInt(input.value);
-    if (isNaN(val) || val < 1) input.value = 1;
-    else if (val > max) input.value = max;
-}
-
-function tratarEnterInputCard(e, input) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        const card = input.closest('.produto-card');
-        if (card) adicionarAoCarrinho(card);
+    function ajustarQtdCard(id, delta) {
+        const input = document.getElementById(`input-qtd-${id}`);
+        if (!input) return;
+        let val = parseInt(input.value) || 1;
+        const max = parseInt(input.getAttribute('max')) || 999;
+        val += delta;
+        if (val < 1) val = 1;
+        if (val > max) val = max;
+        input.value = val;
     }
-}
 
-function filtrarProdutos() {
-    const termo = document.getElementById('busca-produto').value.toLowerCase().trim();
-    const cards = document.querySelectorAll('.produto-card');
-    
-    cards.forEach(card => {
-        const nome = card.dataset.nomeLower;
-        if (nome.includes(termo)) {
-            card.style.display = 'flex';
-        } else {
-            card.style.display = 'none';
+    function validarQtdCard(input, max) {
+        let val = parseInt(input.value) || 1;
+        if (val < 1) val = 1;
+        if (val > max) val = max;
+        input.value = val;
+    }
+
+    function tratarEnterInputCard(event, input) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const card = input.closest('.produto-card');
+            adicionarAoCarrinho(card);
         }
-    });
-}
+    }
 
-function adicionarAoCarrinho(card) {
-    const id       = parseInt(card.dataset.id);
-    const nome     = card.dataset.nome;
-    const preco    = parseFloat(card.dataset.preco);
-    const estoque  = parseInt(card.dataset.estoque);
+    function adicionarAoCarrinho(card) {
+        const id = card.dataset.id;
+        const nome = card.dataset.nome;
+        const preco = parseFloat(card.dataset.preco);
+        const estoque = parseInt(card.dataset.estoque);
+        
+        const inputQtd = document.getElementById(`input-qtd-${id}`);
+        const qtdAdicionar = parseInt(inputQtd ? inputQtd.value : 1);
 
-    const inputQtd = document.getElementById(`input-qtd-${id}`);
-    const qtdDesejada = inputQtd ? (parseInt(inputQtd.value) || 1) : 1;
+        const itemExistente = carrinho.find(item => item.id == id);
+        const qtdAtualNoCarrinho = itemExistente ? itemExistente.quantidade : 0;
 
-    const existente = carrinho.find(i => i.produto_id === id);
-
-    if (existente) {
-        const novaQtd = existente.quantidade + qtdDesejada;
-        if (novaQtd <= existente.estoque_max) {
-            existente.quantidade = novaQtd;
-        } else {
-            alert(`Estoque máximo atingido. Disponível: ${existente.estoque_max}`);
+        if (qtdAtualNoCarrinho + qtdAdicionar > estoque) {
+            alert(`Estoque insuficiente! Disponível: ${estoque}`);
             return;
         }
-    } else {
-        if (qtdDesejada <= estoque) {
-            carrinho.push({ produto_id: id, nome, preco, quantidade: qtdDesejada, estoque_max: estoque });
+
+        if (itemExistente) {
+            itemExistente.quantidade += qtdAdicionar;
         } else {
-            alert(`Estoque insuficiente. Disponível: ${estoque}`);
+            carrinho.push({ id: id, nome: nome, preco: preco, quantidade: qtdAdicionar, estoque: estoque });
+        }
+
+        card.classList.add('card-adicionado');
+        setTimeout(() => card.classList.remove('card-adicionado'), 500);
+
+        if (inputQtd) inputQtd.value = 1;
+        renderizarCarrinho();
+    }
+
+    // --- FUNÇÃO DO + E DO - NO CARRINHO ---
+    function alterarQtdItemCarrinho(id, delta) {
+        const item = carrinho.find(i => i.id == id);
+        if (!item) return;
+
+        item.quantidade += delta;
+
+        if (item.quantidade > item.estoque) {
+            alert(`Limite de estoque atingido (${item.estoque} un)`);
+            item.quantidade = item.estoque;
+        }
+
+        if (item.quantidade <= 0) {
+            removerItemCarrinho(id);
+        } else {
+            renderizarCarrinho();
+        }
+    }
+
+    function removerItemCarrinho(id) {
+        carrinho = carrinho.filter(i => i.id != id);
+        renderizarCarrinho();
+    }
+
+    function atualizarCliente(select) {
+        const option = select.options[select.selectedIndex];
+        clienteAssociado = option.dataset.associado === 'true';
+        
+        document.getElementById('badge-desconto').style.display = clienteAssociado ? 'inline-flex' : 'none';
+        document.getElementById('input-cliente-id').value = select.value;
+        renderizarCarrinho();
+    }
+
+    function renderizarCarrinho() {
+        const lista = document.getElementById('lista-carrinho');
+        const cartCount = document.getElementById('cart-count');
+        const totaisContainer = document.getElementById('totais');
+        const btnFinalizar = document.getElementById('btn-finalizar');
+
+        if (carrinho.length === 0) {
+            lista.innerHTML = `
+                <div class="carrinho-vazio" id="msg-vazio">
+                    <span class="carrinho-vazio-icon">🛍️</span>
+                    <span>Selecione produtos para começar</span>
+                </div>
+            `;
+            cartCount.textContent = '0 itens';
+            totaisContainer.style.display = 'none';
+            btnFinalizar.disabled = true;
             return;
         }
-    }
 
-    if (inputQtd) inputQtd.value = 1;
+        lista.innerHTML = '';
+        let subtotal = 0;
+        let totalItens = 0;
 
-    card.classList.remove('card-adicionado');
-    void card.offsetWidth;
-    card.classList.add('card-adicionado');
+        carrinho.forEach(item => {
+            const itemSubtotal = item.preco * item.quantidade;
+            subtotal += itemSubtotal;
+            totalItens += item.quantidade;
 
-    renderizarCarrinho();
-}
+            const div = document.createElement('div');
+            div.className = 'item-carrinho';
+            div.innerHTML = `
+                <div class="item-info">
+                    <div class="item-nome">${item.nome}</div>
+                    <div class="item-preco-unit">R$ ${item.preco.toFixed(2)} un.</div>
+                </div>
+                <div class="item-qty-ctrl">
+                    <button type="button" class="qty-btn" onclick="event.preventDefault(); alterarQtdItemCarrinho('${item.id}', -1)">−</button>
+                    <input type="number" class="qty-input-cart" value="${item.quantidade}" readonly>
+                    <button type="button" class="qty-btn" onclick="event.preventDefault(); alterarQtdItemCarrinho('${item.id}', 1)">+</button>
+                </div>
+                <div class="item-subtotal">R$ ${itemSubtotal.toFixed(2)}</div>
+                <button type="button" class="item-remover" onclick="event.preventDefault(); removerItemCarrinho('${item.id}')">✕</button>
+            `;
+            lista.appendChild(div);
+        });
 
-// ============================================================
-// Gerenciamento do Carrinho
-// ============================================================
-function alterarQtdItemCarrinho(id, delta) {
-    const item = carrinho.find(i => i.produto_id === id);
-    if (!item) return;
+        cartCount.textContent = `${totalItens} ${totalItens === 1 ? 'item' : 'itens'}`;
 
-    const novaQtd = item.quantidade + delta;
-    if (novaQtd <= 0) {
-        removerItemCarrinho(id);
-    } else if (novaQtd <= item.estoque_max) {
-        item.quantidade = novaQtd;
-        renderizarCarrinho();
-    } else {
-        alert(`Estoque máximo atingido. Disponível: ${item.estoque_max}`);
-    }
-}
+        let valorDescontoAssoc = clienteAssociado ? (subtotal * DESCONTO_ASSOCIADO_PCT) : 0;
+        let valManualInput = parseFloat(document.getElementById('desconto-manual').value) || 0;
+        
+        let totalTemp = subtotal - valorDescontoAssoc;
+        let valorDescontoManual = Math.min(valManualInput, totalTemp);
+        let totalFinal = Math.max(0, totalTemp - valorDescontoManual);
 
-function atualizarQtdDiretaCarrinho(id, input) {
-    const item = carrinho.find(i => i.produto_id === id);
-    if (!item) return;
-
-    let novaQtd = parseInt(input.value);
-    if (isNaN(novaQtd) || novaQtd <= 0) {
-        removerItemCarrinho(id);
-    } else if (novaQtd <= item.estoque_max) {
-        item.quantidade = novaQtd;
-        renderizarCarrinho();
-    } else {
-        alert(`Estoque máximo atingido. Disponível: ${item.estoque_max}`);
-        input.value = item.quantidade;
-    }
-}
-
-function removerItemCarrinho(id) {
-    carrinho = carrinho.filter(i => i.produto_id !== id);
-    renderizarCarrinho();
-}
-
-function atualizarCliente(select) {
-    const opt = select.options[select.selectedIndex];
-    clienteAtual.id = parseInt(select.value);
-    clienteAtual.associado = (opt.dataset.associado === 'true');
-    
-    document.getElementById('input-cliente-id').value = clienteAtual.id;
-    document.getElementById('badge-desconto').style.display = clienteAtual.associado ? 'inline-flex' : 'none';
-    
-    renderizarCarrinho();
-}
-
-function renderizarCarrinho() {
-    const container = document.getElementById('lista-carrinho');
-    const msgVazio = document.getElementById('msg-vazio');
-    const totaisBox = document.getElementById('totais');
-    const btnFinalizar = document.getElementById('btn-finalizar');
-    const countBadge = document.getElementById('cart-count');
-
-    const totalItens = carrinho.reduce((sum, item) => sum + item.quantidade, 0);
-    countBadge.textContent = `${totalItens} item${totalItens !== 1 ? 's' : ''}`;
-
-    if (carrinho.length === 0) {
-        container.innerHTML = '';
-        container.appendChild(msgVazio);
-        msgVazio.style.display = 'flex';
-        totaisBox.style.display = 'none';
-        btnFinalizar.disabled = true;
-        return;
-    }
-
-    msgVazio.style.display = 'none';
-    container.innerHTML = '';
-
-    let subtotal = 0;
-
-    carrinho.forEach(item => {
-        const itemSubtotal = item.preco * item.quantidade;
-        subtotal += itemSubtotal;
-
-        const el = document.createElement('div');
-        el.className = 'item-carrinho';
-        el.innerHTML = `
-            <div class="item-info">
-                <div class="item-nome">${item.nome}</div>
-                <div class="item-preco-unit">R$ ${item.preco.toFixed(2)} un.</div>
-            </div>
-            <div class="item-qty-ctrl">
-                <button type="button" class="qty-btn" onclick="alterarQtdItemCarrinho(${item.produto_id}, -1)">−</button>
-                <input type="number" class="qty-input-cart" value="${item.quantidade}" min="1" max="${item.estoque_max}" onchange="atualizarQtdDiretaCarrinho(${item.produto_id}, this)">
-                <button type="button" class="qty-btn" onclick="alterarQtdItemCarrinho(${item.produto_id}, 1)">+</button>
-            </div>
-            <div class="item-subtotal">R$ ${itemSubtotal.toFixed(2)}</div>
-            <button type="button" class="item-remover" onclick="removerItemCarrinho(${item.produto_id})" title="Remover item">✕</button>
-        `;
-        container.appendChild(el);
-    });
-
-    let valorDescontoAssoc = 0;
-    if (clienteAtual.associado && DESCONTO_PCT > 0) {
-        valorDescontoAssoc = subtotal * (DESCONTO_PCT / 100);
-    }
-
-    const descontoManualInput = parseFloat(document.getElementById('desconto-manual').value) || 0;
-    const totalFinal = Math.max(0, subtotal - valorDescontoAssoc - descontoManualInput);
-
-    document.getElementById('val-subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
-    
-    const linhaDescontoAssoc = document.getElementById('linha-desconto-assoc');
-    if (clienteAtual.associado && DESCONTO_PCT > 0) {
-        document.getElementById('label-desconto-assoc').textContent = `Desconto (${DESCONTO_PCT}%)`;
-        document.getElementById('val-desconto-assoc').textContent = `— R$ ${valorDescontoAssoc.toFixed(2)}`;
-        linhaDescontoAssoc.style.display = 'flex';
-    } else {
-        linhaDescontoAssoc.style.display = 'none';
-    }
-
-    const linhaDescontoManual = document.getElementById('linha-desconto-manual');
-    if (descontoManualInput > 0) {
-        document.getElementById('val-desconto-manual').textContent = `— R$ ${descontoManualInput.toFixed(2)}`;
-        linhaDescontoManual.style.display = 'flex';
-    } else {
-        linhaDescontoManual.style.display = 'none';
-    }
-
-    document.getElementById('val-total').textContent = `R$ ${totalFinal.toFixed(2)}`;
-    
-    totaisBox.style.display = 'block';
-    btnFinalizar.disabled = false;
-}
-
-// ============================================================
-// Lógica do Modal PIX & Finalização de Venda
-// ============================================================
-function finalizarVenda() {
-    if (carrinho.length === 0) return;
-
-    const pagamentos = [];
-    const met1 = document.getElementById('metodo-pagamento-1').value;
-    const val1 = parseFloat(document.getElementById('valor-pagamento-1').value) || 0;
-    
-    const met2 = document.getElementById('metodo-pagamento-2').value;
-    const val2 = parseFloat(document.getElementById('valor-pagamento-2').value) || 0;
-
-    if (val1 > 0 && met1) pagamentos.push({ metodo: met1, valor: val1 });
-    if (val2 > 0 && met2) pagamentos.push({ metodo: met2, valor: val2 });
-
-    const descontoManual = parseFloat(document.getElementById('desconto-manual').value) || 0;
-
-    document.getElementById('input-carrinho').value = JSON.stringify(carrinho);
-    document.getElementById('input-obs').value = document.getElementById('obs-input').value;
-    document.getElementById('input-desconto-manual').value = descontoManual;
-    document.getElementById('input-pagamentos-json').value = JSON.stringify(pagamentos);
-
-    // Verificar se algum dos métodos de pagamento selecionados é PIX
-    const temPix = pagamentos.some(p => p.metodo === 'PIX');
-    if (temPix) {
-        const valorPix = pagamentos.filter(p => p.metodo === 'PIX').reduce((acc, p) => acc + p.valor, 0);
-        abrirModalPix(valorPix);
-    } else {
-        confirmarEEnviarVenda();
-    }
-}
-
-function abrirModalPix(valor) {
-    document.getElementById('pix-modal-valor').textContent = `R$ ${valor.toFixed(2)}`;
-    
-    // Gera payload genérico / QR Code Dinâmico
-    const dummyPixCode = `00020126580014BR.GOV.BCB.PIX0136aapm-senai-pagamentos@senai.br520400005303986540${valor.toFixed(2).replace('.', '')}5802BR5915AAPM SENAI PDV6009SAO PAULO62070503***6304`;
-    document.getElementById('pix-copiacola-text').textContent = dummyPixCode;
-
-    // API pública para gerar o gráfico QR Code
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(dummyPixCode)}`;
-    document.getElementById('pix-qrcode-img').src = qrUrl;
-
-    document.getElementById('modal-pix').classList.add('active');
-    iniciarTimerPix(5 * 60); // 5 minutos
-}
-
-function fecharModalPix() {
-    document.getElementById('modal-pix').classList.remove('active');
-    if (pixTimerInterval) clearInterval(pixTimerInterval);
-}
-
-function iniciarTimerPix(segundos) {
-    if (pixTimerInterval) clearInterval(pixTimerInterval);
-    let tempoRestante = segundos;
-
-    const timerDisplay = document.getElementById('pix-timer');
-
-    pixTimerInterval = setInterval(() => {
-        const mins = Math.floor(tempoRestante / 60);
-        const secs = tempoRestante % 60;
-
-        timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-
-        if (tempoRestante <= 0) {
-            clearInterval(pixTimerInterval);
-            alert("O tempo para pagamento do PIX expirou.");
-            fecharModalPix();
+        document.getElementById('val-subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
+        
+        const linhaDescontoAssoc = document.getElementById('linha-desconto-assoc');
+        if (clienteAssociado && valorDescontoAssoc > 0) {
+            linhaDescontoAssoc.style.display = 'flex';
+            document.getElementById('val-desconto-assoc').textContent = `— R$ ${valorDescontoAssoc.toFixed(2)}`;
+        } else {
+            linhaDescontoAssoc.style.display = 'none';
         }
 
-        tempoRestante--;
-    }, 1000);
-}
+        const linhaDescontoManual = document.getElementById('linha-desconto-manual');
+        if (valorDescontoManual > 0) {
+            linhaDescontoManual.style.display = 'flex';
+            document.getElementById('val-desconto-manual').textContent = `— R$ ${valorDescontoManual.toFixed(2)}`;
+        } else {
+            linhaDescontoManual.style.display = 'none';
+        }
 
-function confirmarEEnviarVenda() {
-    fecharModalPix();
-    document.getElementById('form-venda').submit();
-}
+        document.getElementById('val-total').textContent = `R$ ${totalFinal.toFixed(2)}`;
+        totaisContainer.style.display = 'block';
 
-function toggleModalAtalhos() {
-    document.getElementById('modal-atalhos').classList.toggle('active');
-}
+        const inputPag1 = document.getElementById('valor-pagamento-1');
+        const inputPag2 = document.getElementById('valor-pagamento-2');
+        const valPag2 = parseFloat(inputPag2.value) || 0;
+        
+        inputPag1.value = Math.max(0, totalFinal - valPag2).toFixed(2);
+        btnFinalizar.disabled = false;
+    }
 
-// Atalhos Globais de Teclado
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'F1') {
+    function filtrarProdutos() {
+        const termo = document.getElementById('busca-produto').value.toLowerCase().trim();
+        const cards = document.querySelectorAll('.produto-card');
+
+        cards.forEach(card => {
+            const nome = card.dataset.nomeLower;
+            if (nome.includes(termo)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    function obterPagamentosFormulados() {
+        const pagamentos = [];
+        const m1 = document.getElementById('metodo-pagamento-1').value;
+        const v1 = parseFloat(document.getElementById('valor-pagamento-1').value) || 0;
+        
+        const m2 = document.getElementById('metodo-pagamento-2').value;
+        const v2 = parseFloat(document.getElementById('valor-pagamento-2').value) || 0;
+
+        if (m1 && v1 > 0) pagamentos.push({ metodo: m1, valor: v1 });
+        if (m2 && v2 > 0) pagamentos.push({ metodo: m2, valor: v2 });
+
+        return pagamentos;
+    }
+
+    // --- LÓGICA DE PROCESSAMENTO E EXIBIÇÃO DE MODAIS ---
+    function processarFinalizacao() {
+        if (carrinho.length === 0) return;
+
+        const pagamentos = obterPagamentosFormulados();
+        
+        const possuiPix = pagamentos.some(p => p.metodo === 'PIX');
+        const possuiCartao = pagamentos.some(p => ['CARTAO_DEBITO', 'CARTAO_CREDITO'].includes(p.metodo));
+        const possuiDinheiro = pagamentos.some(p => p.metodo === 'DINHEIRO');
+
+        if (possuiCartao) {
+            abrirModalCartao();
+        } 
+        else if (possuiDinheiro) {
+            alert("Aparece na sala da Gidalva para pagar");
+            if (possuiPix) {
+                abrirModalPix();
+            } else {
+                window.location.reload();
+            }
+        } 
+        else if (possuiPix) {
+            abrirModalPix();
+        } 
+        else {
+            submeterFormularioVenda();
+        }
+    }
+
+    /* Modal Cartão & Carregamento de Dados Salvos */
+    function abrirModalCartao() {
+        const cartaoSalvo = localStorage.getItem('pdv_cartao_salvo');
+        if (cartaoSalvo) {
+            try {
+                const dados = JSON.parse(cartaoSalvo);
+                document.getElementById('card-num').value = dados.num || '';
+                document.getElementById('card-name').value = dados.nome || '';
+                document.getElementById('card-expiry').value = dados.validade || '';
+            } catch(e) {}
+        }
+        document.getElementById('modal-cartao').classList.add('active');
+    }
+
+    function fecharModalCartao() {
+        document.getElementById('modal-cartao').classList.remove('active');
+    }
+
+    function mascaraCartao(input) {
+        let v = input.value.replace(/\D/g, '');
+        v = v.replace(/(\d{4})/g, '$1 ').trim();
+        input.value = v;
+    }
+
+    function mascaraValidade(input) {
+        let v = input.value.replace(/\D/g, '');
+        if (v.length >= 2) {
+            v = v.substring(0, 2) + '/' + v.substring(2, 4);
+        }
+        input.value = v;
+    }
+
+    function confirmarPagamentoCartao(e) {
         e.preventDefault();
-        toggleModalAtalhos();
-    } else if (e.key === 'F2') {
-        e.preventDefault();
-        document.getElementById('busca-produto').focus();
-    } else if (e.key === 'F4') {
-        e.preventDefault();
-        document.getElementById('select-cliente').focus();
-    } else if (e.key === 'F8') {
-        e.preventDefault();
-        document.getElementById('obs-input').focus();
-    } else if (e.key === 'F9') {
-        e.preventDefault();
-        finalizarVenda();
-    } else if (e.key === 'Escape') {
-        document.getElementById('modal-atalhos').classList.remove('active');
+        
+        const deveSalvar = document.getElementById('save-card-check').checked;
+        if (deveSalvar) {
+            const dadosCartao = {
+                num: document.getElementById('card-num').value,
+                nome: document.getElementById('card-name').value,
+                validade: document.getElementById('card-expiry').value
+            };
+            localStorage.setItem('pdv_cartao_salvo', JSON.stringify(dadosCartao));
+        }
+
+        fecharModalCartao();
+        alert("Pagamento com cartão aprovado e processado com sucesso!");
+        
+        const pagamentos = obterPagamentosFormulados();
+        if (pagamentos.some(p => p.metodo === 'PIX')) {
+            abrirModalPix();
+        } else {
+            window.location.reload();
+        }
+    }
+
+    /* Modal PIX */
+    function abrirModalPix() {
+        const modal = document.getElementById('modal-pix');
+        const imgQr = document.getElementById('img-qr-pix');
+        
+        const pagamentos = obterPagamentosFormulados();
+        const pagPix = pagamentos.find(p => p.metodo === 'PIX');
+        const valorPix = pagPix ? pagPix.valor.toFixed(2) : "0.00";
+
+        const qrData = encodeURIComponent(`PIX:${CHAVE_PIX}|VALOR:${valorPix}`);
+        imgQr.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${qrData}`;
+        
+        document.getElementById('pix-copiacola').textContent = CHAVE_PIX;
+
+        modal.classList.add('active');
+        
+        let tempoRestante = 300;
+        const displayTimer = document.getElementById('pix-timer');
+
+        clearInterval(pixTimerInterval);
+        pixTimerInterval = setInterval(() => {
+            let minutos = Math.floor(tempoRestante / 60);
+            let segundos = tempoRestante % 60;
+            displayTimer.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+            
+            if (--tempoRestante < 0) {
+                fecharModalPix();
+                alert('Tempo de pagamento PIX expirado!');
+            }
+        }, 1000);
+    }
+
+    function fecharModalPix() {
+        clearInterval(pixTimerInterval);
+        document.getElementById('modal-pix').classList.remove('active');
+    }
+
+    function confirmarPagamentoPix() {
         fecharModalPix();
+        submeterFormularioVenda();
     }
-});
-</script>
 
+    function submeterFormularioVenda() {
+        const pagamentos = obterPagamentosFormulados();
+        const descManual = parseFloat(document.getElementById('desconto-manual').value) || 0;
+        const obs = document.getElementById('obs-input').value;
+
+        document.getElementById('input-carrinho').value = JSON.stringify(carrinho);
+        document.getElementById('input-desconto-manual').value = descManual;
+        document.getElementById('input-observacao').value = obs;
+        document.getElementById('input-pagamentos-json').value = JSON.stringify(pagamentos);
+
+        document.getElementById('form-venda').submit();
+    }
+
+    function toggleModalAtalhos() {
+        const modal = document.getElementById('modal-atalhos');
+        modal.classList.toggle('active');
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'F1') {
+            e.preventDefault();
+            toggleModalAtalhos();
+        } else if (e.key === 'F2') {
+            e.preventDefault();
+            document.getElementById('busca-produto').focus();
+        } else if (e.key === 'F4') {
+            e.preventDefault();
+            document.getElementById('select-cliente').focus();
+        } else if (e.key === 'F8') {
+            e.preventDefault();
+            document.getElementById('obs-input').focus();
+        } else if (e.key === 'F9') {
+            e.preventDefault();
+            const btn = document.getElementById('btn-finalizar');
+            if (!btn.disabled) processarFinalizacao();
+        } else if (e.key === 'Escape') {
+            document.getElementById('modal-atalhos').classList.remove('active');
+            fecharModalPix();
+            fecharModalCartao();
+        }
+    });
+</script>
 </body>
 </html>
