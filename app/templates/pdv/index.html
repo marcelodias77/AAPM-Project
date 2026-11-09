@@ -344,7 +344,6 @@
 
         .produto-card.sem-estoque .card-acoes { display: none; }
 
-        /* Animação Feedback de Adicionado */
         @keyframes addedFlash {
             0% { border-color: var(--success); box-shadow: 0 0 15px var(--success-glow); }
             100% { border-color: rgba(255, 255, 255, 0.05); }
@@ -382,21 +381,20 @@
             font-family: monospace;
         }
 
-        /* Seção do Cliente */
-        .cliente-section {
-            padding: 14px 20px;
+        .cliente-section, .pagamento-section {
+            padding: 12px 20px;
             border-bottom: 1px solid var(--border-color);
             background: rgba(15, 23, 42, 0.2);
         }
 
-        .cliente-header-flex {
+        .cliente-header-flex, .pagamento-header-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 6px;
         }
 
-        .cliente-section label {
+        .cliente-section label, .pagamento-section label {
             font-size: 11px;
             font-weight: 700;
             color: var(--text-muted);
@@ -404,20 +402,19 @@
             letter-spacing: .05em;
         }
 
-        .cliente-select {
+        .cliente-select, .pdv-input, .pdv-select {
             width: 100%;
-            padding: 10px 12px;
+            padding: 8px 10px;
             background: #0f172a;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-main);
             outline: none;
-            cursor: pointer;
             transition: var(--transition);
         }
 
-        .cliente-select:focus { border-color: var(--border-focus); }
+        .cliente-select:focus, .pdv-input:focus, .pdv-select:focus { border-color: var(--border-focus); }
 
         .desconto-badge {
             display: inline-flex;
@@ -426,14 +423,20 @@
             background: rgba(16, 185, 129, 0.15);
             border: 1px solid rgba(16, 185, 129, 0.3);
             color: #34d399;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 20px;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
-        /* Lista de Itens no Carrinho */
+        .pagamento-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
         .carrinho-itens {
             flex: 1;
             overflow-y: auto;
@@ -458,7 +461,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 20px;
+            padding: 10px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             transition: var(--transition);
             animation: fadeIn 0.15s ease-in;
@@ -467,6 +470,8 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
         .item-carrinho:hover { background: rgba(255, 255, 255, 0.02); }
+
+        .item-info { flex: 1; }
 
         .item-nome {
             font-size: 13px;
@@ -549,32 +554,31 @@
 
         .item-remover:hover { color: var(--danger); background: var(--danger-bg); }
 
-        /* Rodapé do Carrinho */
         .carrinho-footer {
             border-top: 1px solid var(--border-color);
-            padding: 18px 20px;
+            padding: 14px 20px;
             flex-shrink: 0;
             background: rgba(15, 23, 42, 0.5);
         }
 
-        .totais { margin-bottom: 14px; }
+        .totais { margin-bottom: 10px; }
 
         .total-linha {
             display: flex;
             justify-content: space-between;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-muted);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .total-linha.desconto { color: #34d399; font-weight: 600; }
 
         .total-linha.final {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
             color: #ffffff;
-            margin-top: 10px;
-            padding-top: 10px;
+            margin-top: 8px;
+            padding-top: 8px;
             border-top: 1px dashed var(--border-color);
             letter-spacing: -0.02em;
         }
@@ -583,12 +587,12 @@
 
         .obs-container {
             position: relative;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .obs-input {
             width: 100%;
-            padding: 10px 12px;
+            padding: 8px 10px;
             background: #0f172a;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
@@ -603,12 +607,12 @@
 
         .btn-finalizar {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: linear-gradient(135deg, var(--success), var(--success-hover));
             color: #fff;
             border: none;
             border-radius: var(--radius-md);
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             transition: var(--transition);
@@ -635,7 +639,6 @@
             opacity: 0.5;
         }
 
-        /* Alertas de Erro */
         .alerta {
             background: var(--danger-bg);
             color: #fca5a5;
@@ -646,12 +649,12 @@
             margin: 12px 20px 0 20px;
         }
 
-        /* Modal de Atalhos */
+        /* Modais */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(6px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -671,6 +674,7 @@
             width: 100%;
             max-width: 400px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            text-align: center;
         }
 
         .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; justify-content: space-between; }
@@ -678,18 +682,51 @@
         .atalho-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
         .atalho-row kbd { background: #0f172a; border: 1px solid var(--border-color); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: 700; }
         
+        /* Estilos Específicos Modal PIX */
+        .pix-container { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+        .pix-timer { font-size: 28px; font-weight: 800; font-family: monospace; color: #34d399; }
+        .pix-qrcode { width: 180px; height: 180px; background: #fff; padding: 10px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .pix-qrcode img { width: 100%; height: 100%; }
+        .pix-copiacola { background: #0f172a; border: 1px solid var(--border-color); padding: 8px; border-radius: var(--radius-sm); font-size: 11px; font-family: monospace; color: var(--text-muted); width: 100%; word-break: break-all; }
+        
+        .paginacao-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .paginacao-info { font-size: 12px; color: var(--text-muted); }
+        .paginacao-botoes { display: flex; gap: 6px; }
+        .page-link {
+            padding: 4px 10px;
+            font-size: 12px;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+        }
+        .page-link.active { background: var(--primary); border-color: var(--primary); }
+        .page-link.disabled { opacity: 0.4; pointer-events: none; }
     </style>
 </head>
 <body>
 
 <header class="topbar">
-    <span class="topbar-title"> PDV — AAPM SENAI</span>
+    <span class="topbar-title">⚡ PDV — AAPM SENAI</span>
     <nav class="topbar-links">
-        <button class="btn-atalhos-info" onclick="toggleModalAtalhos()"> Atalhos [F1]</button>
+        <button class="btn-atalhos-info" onclick="toggleModalAtalhos()">⌨️ Atalhos [F1]</button>
         <a href="/pdv/historico">Histórico</a>
         <a href="/clientes">Clientes</a>
-        <p><a href="/" class="link-voltar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-Dashboard</a></p>
+        <a href="/" class="link-voltar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Dashboard
+        </a>
     </nav>
 </header>
 
@@ -699,6 +736,7 @@ Dashboard</a></p>
     {% if erro == 'vazio' %}Carrinho vazio. Adicione produtos antes de finalizar.
     {% elif erro == 'estoque' %}Estoque insuficiente para: {{ request.query_params.get('produto') }}
     {% elif erro == 'quantidade' %}Quantidade inválida.
+    {% elif erro == 'pagamento' %}Valores informados no pagamento são incompatíveis com o total.
     {% else %}Ocorreu um erro. Tente novamente.
     {% endif %}
 </div>
@@ -710,12 +748,13 @@ Dashboard</a></p>
     <section class="produtos-col">
         <div class="produtos-header">
             <div class="busca-container">
-                <span class="busca-icon"></span>
+                <span class="busca-icon">🔍</span>
                 <input class="busca-input"
                        type="text"
                        id="busca-produto"
                        placeholder="Buscar produto pelo nome..."
-                       autocomplete="off">
+                       autocomplete="off"
+                       onkeyup="filtrarProdutos()">
                 <span class="kbd-badge">F2</span>
             </div>
         </div>
@@ -752,6 +791,34 @@ Dashboard</a></p>
             </div>
             {% endfor %}
         </div>
+
+        <!-- BARRA DE PAGINAÇÃO -->
+        {% if (total_paginas | default(0)) > 1 %}
+        <div class="paginacao-container">
+            <div class="paginacao-info">
+                Página <strong>{{ pagina_atual }}</strong> de <strong>{{ total_paginas }}</strong>
+            </div>
+
+            <div class="paginacao-botoes">
+                <a href="/produtos?pagina={{ pagina_atual - 1 }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
+                   class="page-link {{ 'disabled' if pagina_atual <= 1 else '' }}">
+                    Anterior
+                </a>
+
+                {% for p in range(1, total_paginas + 1) %}
+                    <a href="/produtos?pagina={{ p }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
+                       class="page-link {{ 'active' if p == pagina_atual else '' }}">
+                        {{ p }}
+                    </a>
+                {% endfor %}
+
+                <a href="/produtos?pagina={{ pagina_atual + 1 }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
+                   class="page-link {{ 'disabled' if pagina_atual >= total_paginas else '' }}">
+                    Próximo
+                </a>
+            </div>
+        </div>
+        {% endif %}
     </section>
 
     <!-- Coluna Direita: Carrinho -->
@@ -789,8 +856,41 @@ Dashboard</a></p>
 
         <div class="carrinho-itens" id="lista-carrinho">
             <div class="carrinho-vazio" id="msg-vazio">
-                <span class="carrinho-vazio-icon"></span>
+                <span class="carrinho-vazio-icon">🛍️</span>
                 <span>Selecione produtos para começar</span>
+            </div>
+        </div>
+
+        <!-- Seção de Pagamentos e Desconto Manual -->
+        <div class="pagamento-section">
+            <div class="pagamento-header-flex">
+                <label>Desconto Manual (R$)</label>
+            </div>
+            <input type="number" id="desconto-manual" class="pdv-input" placeholder="0.00" step="0.01" min="0" oninput="renderizarCarrinho()">
+
+            <div class="pagamento-header-flex" style="margin-top: 10px;">
+                <label>Formas de Pagamento</label>
+            </div>
+            <div class="pagamento-grid">
+                <div>
+                    <select id="metodo-pagamento-1" class="pdv-select">
+                        <option value="DINHEIRO">Dinheiro</option>
+                        <option value="PIX">PIX</option>
+                        <option value="CARTAO_DEBITO">Débito</option>
+                        <option value="CARTAO_CREDITO">Crédito</option>
+                    </select>
+                    <input type="number" id="valor-pagamento-1" class="pdv-input" style="margin-top:4px;" placeholder="Valor R$" step="0.01" min="0" oninput="renderizarCarrinho()">
+                </div>
+                <div>
+                    <select id="metodo-pagamento-2" class="pdv-select">
+                        <option value="">(Sem 2ª Forma)</option>
+                        <option value="DINHEIRO">Dinheiro</option>
+                        <option value="PIX">PIX</option>
+                        <option value="CARTAO_DEBITO">Débito</option>
+                        <option value="CARTAO_CREDITO">Crédito</option>
+                    </select>
+                    <input type="number" id="valor-pagamento-2" class="pdv-input" style="margin-top:4px;" placeholder="Valor R$" step="0.01" min="0" oninput="renderizarCarrinho()">
+                </div>
             </div>
         </div>
 
@@ -800,9 +900,13 @@ Dashboard</a></p>
                     <span>Subtotal</span>
                     <span id="val-subtotal">R$ 0,00</span>
                 </div>
-                <div class="total-linha desconto" id="linha-desconto" style="display:none">
-                    <span id="label-desconto">Desconto (0%)</span>
-                    <span id="val-desconto">— R$ 0,00</span>
+                <div class="total-linha desconto" id="linha-desconto-assoc" style="display:none">
+                    <span id="label-desconto-assoc">Desconto Associado</span>
+                    <span id="val-desconto-assoc">— R$ 0,00</span>
+                </div>
+                <div class="total-linha desconto" id="linha-desconto-manual" style="display:none">
+                    <span>Desconto Manual</span>
+                    <span id="val-desconto-manual">— R$ 0,00</span>
                 </div>
                 <div class="total-linha final">
                     <span>Total</span>
@@ -821,6 +925,10 @@ Dashboard</a></p>
                 <input type="hidden" name="carrinho_json" id="input-carrinho">
                 <input type="hidden" name="cliente_id"   id="input-cliente-id" value="0">
                 <input type="hidden" name="observacao"   id="input-obs">
+                
+                <input type="hidden" name="desconto_manual" id="input-desconto-manual" value="0">
+                <input type="hidden" name="pagamentos_json"  id="input-pagamentos-json">
+
                 <button class="btn-finalizar"
                         id="btn-finalizar"
                         type="button"
@@ -838,47 +946,42 @@ Dashboard</a></p>
 <div class="modal-overlay" id="modal-atalhos">
     <div class="modal-box">
         <div class="modal-title">
-            <span> Atalhos do Teclado</span>
+            <span>⌨️ Atalhos do Teclado</span>
             <button class="modal-close" onclick="toggleModalAtalhos()">×</button>
         </div>
+        <div class="atalho-row"><span>Ajuda / Atalhos</span><kbd>F1</kbd></div>
         <div class="atalho-row"><span>Buscar Produto</span><kbd>F2</kbd></div>
         <div class="atalho-row"><span>Selecionar Cliente</span><kbd>F4</kbd></div>
         <div class="atalho-row"><span>Campo Observação</span><kbd>F8</kbd></div>
-        <div class="atalho-row"><span>Finalizar Venda</span><kbd>F9</kbd> ou <kbd>Enter</kbd></div>
+        <div class="atalho-row"><span>Finalizar Venda</span><kbd>F9</kbd></div>
         <div class="atalho-row"><span>Fechar Ajuda / Telas</span><kbd>Esc</kbd></div>
     </div>
 </div>
-        <!-- --- BARRA DE PAGINAÇÃO --- -->
-            {% if (total_paginas | default(0)) > 1 %}
-            <div class="paginacao-container">
-                <div class="paginacao-info">
-                    Página <strong>{{ pagina_atual }}</strong> de <strong>{{ total_paginas }}</strong>
-                </div>
 
-                <div class="paginacao-botoes">
-                    <!-- Botão Anterior -->
-                    <a href="/produtos?pagina={{ pagina_atual - 1 }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
-                       class="page-link {{ 'disabled' if pagina_atual <= 1 else '' }}">
-                        Anterior
-                    </a>
-
-                    <!-- Links Numéricos (1, 2, 3...) -->
-                    {% for p in range(1, total_paginas + 1) %}
-                        <a href="/produtos?pagina={{ p }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
-                           class="page-link {{ 'active' if p == pagina_atual else '' }}">
-                            {{ p }}
-                        </a>
-                    {% endfor %}
-
-                    <!-- Botão Próximo -->
-                    <a href="/produtos?pagina={{ pagina_atual + 1 }}&busca={{ busca or '' }}&categoria_id={{ categoria_id or 0 }}"
-                       class="page-link {{ 'disabled' if pagina_atual >= total_paginas else '' }}">
-                        Proximo
-                    </a>
-                </div>
-            </div>
-            {% endif %}
+<!-- Modal PIX -->
+<div class="modal-overlay" id="modal-pix">
+    <div class="modal-box">
+        <div class="modal-title">
+            <span>📱 Pagamento via PIX</span>
+            <button class="modal-close" onclick="fecharModalPix()">×</button>
         </div>
+        <div class="pix-container">
+            <div>Escaneie o QR Code abaixo para pagar</div>
+            <div class="pix-timer" id="pix-timer">05:00</div>
+            
+            <div class="pix-qrcode">
+                <img id="pix-qrcode-img" src="" alt="QR Code PIX">
+            </div>
+
+            <div style="font-size: 11px; color: var(--text-muted)">Valor do PIX: <strong id="pix-modal-valor" style="color: #fff">R$ 0,00</strong></div>
+            <div class="pix-copiacola" id="pix-copiacola-text">00020126360014BR.GOV.BCB.PIX...</div>
+            
+            <button type="button" class="btn-finalizar" style="margin-top: 10px;" onclick="confirmarEEnviarVenda()">
+                ✓ Confirmar Pagamento Recebido
+            </button>
+        </div>
+    </div>
+</div>
 
 <script>
 // ============================================================
@@ -886,7 +989,8 @@ Dashboard</a></p>
 // ============================================================
 let carrinho = [];
 let clienteAtual = { id: 0, associado: false };
-const DESCONTO_PCT = {{ desconto_associado }};
+const DESCONTO_PCT = parseFloat("{{ desconto_associado | default(0) }}");
+let pixTimerInterval = null;
 
 // ============================================================
 // Lógica de Produtos / Cards
@@ -916,6 +1020,20 @@ function tratarEnterInputCard(e, input) {
         const card = input.closest('.produto-card');
         if (card) adicionarAoCarrinho(card);
     }
+}
+
+function filtrarProdutos() {
+    const termo = document.getElementById('busca-produto').value.toLowerCase().trim();
+    const cards = document.querySelectorAll('.produto-card');
+    
+    cards.forEach(card => {
+        const nome = card.dataset.nomeLower;
+        if (nome.includes(termo)) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    });
 }
 
 function adicionarAoCarrinho(card) {
@@ -948,180 +1066,228 @@ function adicionarAoCarrinho(card) {
 
     if (inputQtd) inputQtd.value = 1;
 
-    // Efeito Visual de Confirmação no Card
     card.classList.remove('card-adicionado');
-    void card.offsetWidth; // Reflow trigger
+    void card.offsetWidth;
     card.classList.add('card-adicionado');
 
     renderizarCarrinho();
 }
 
 // ============================================================
-// Lógica do Carrinho Dinâmico
+// Gerenciamento do Carrinho
 // ============================================================
-function alterarQtd(produtoId, delta) {
-    const item = carrinho.find(i => i.produto_id === produtoId);
+function alterarQtdItemCarrinho(id, delta) {
+    const item = carrinho.find(i => i.produto_id === id);
     if (!item) return;
 
-    item.quantidade += delta;
-
-    if (item.quantidade <= 0) {
-        removerItem(produtoId);
-        return;
+    const novaQtd = item.quantidade + delta;
+    if (novaQtd <= 0) {
+        removerItemCarrinho(id);
+    } else if (novaQtd <= item.estoque_max) {
+        item.quantidade = novaQtd;
+        renderizarCarrinho();
+    } else {
+        alert(`Estoque máximo atingido. Disponível: ${item.estoque_max}`);
     }
-
-    if (item.quantidade > item.estoque_max) {
-        item.quantidade = item.estoque_max;
-    }
-
-    renderizarCarrinho();
 }
 
-function editarQtdDireto(produtoId, input) {
-    const item = carrinho.find(i => i.produto_id === produtoId);
+function atualizarQtdDiretaCarrinho(id, input) {
+    const item = carrinho.find(i => i.produto_id === id);
     if (!item) return;
 
-    let val = parseInt(input.value);
-    if (isNaN(val) || val <= 0) {
-        removerItem(produtoId);
-        return;
+    let novaQtd = parseInt(input.value);
+    if (isNaN(novaQtd) || novaQtd <= 0) {
+        removerItemCarrinho(id);
+    } else if (novaQtd <= item.estoque_max) {
+        item.quantidade = novaQtd;
+        renderizarCarrinho();
+    } else {
+        alert(`Estoque máximo atingido. Disponível: ${item.estoque_max}`);
+        input.value = item.quantidade;
     }
-
-    if (val > item.estoque_max) {
-        val = item.estoque_max;
-    }
-
-    item.quantidade = val;
-    renderizarCarrinho();
 }
 
-function removerItem(produtoId) {
-    carrinho = carrinho.filter(i => i.produto_id !== produtoId);
+function removerItemCarrinho(id) {
+    carrinho = carrinho.filter(i => i.produto_id !== id);
     renderizarCarrinho();
 }
 
 function atualizarCliente(select) {
     const opt = select.options[select.selectedIndex];
-    clienteAtual.id        = parseInt(opt.value);
-    clienteAtual.associado = opt.dataset.associado === 'true';
-
-    const badge = document.getElementById('badge-desconto');
-    badge.style.display = clienteAtual.associado ? 'inline-flex' : 'none';
-
-    renderizarTotais();
+    clienteAtual.id = parseInt(select.value);
+    clienteAtual.associado = (opt.dataset.associado === 'true');
+    
+    document.getElementById('input-cliente-id').value = clienteAtual.id;
+    document.getElementById('badge-desconto').style.display = clienteAtual.associado ? 'inline-flex' : 'none';
+    
+    renderizarCarrinho();
 }
 
 function renderizarCarrinho() {
-    const lista    = document.getElementById('lista-carrinho');
-    const vazio    = document.getElementById('msg-vazio');
-    const totais   = document.getElementById('totais');
-    const btnFinal = document.getElementById('btn-finalizar');
-    const countEl  = document.getElementById('cart-count');
+    const container = document.getElementById('lista-carrinho');
+    const msgVazio = document.getElementById('msg-vazio');
+    const totaisBox = document.getElementById('totais');
+    const btnFinalizar = document.getElementById('btn-finalizar');
+    const countBadge = document.getElementById('cart-count');
 
-    const totalItensCount = carrinho.reduce((acc, i) => acc + i.quantidade, 0);
-    countEl.textContent = `${totalItensCount} item${totalItensCount !== 1 ? 'ns' : ''}`;
+    const totalItens = carrinho.reduce((sum, item) => sum + item.quantidade, 0);
+    countBadge.textContent = `${totalItens} item${totalItens !== 1 ? 's' : ''}`;
 
     if (carrinho.length === 0) {
-        lista.innerHTML = '';
-        lista.appendChild(vazio);
-        vazio.style.display = 'flex';
-        totais.style.display = 'none';
-        btnFinal.disabled = true;
+        container.innerHTML = '';
+        container.appendChild(msgVazio);
+        msgVazio.style.display = 'flex';
+        totaisBox.style.display = 'none';
+        btnFinalizar.disabled = true;
         return;
     }
 
-    vazio.style.display = 'none';
-    totais.style.display = 'block';
-    btnFinal.disabled = false;
+    msgVazio.style.display = 'none';
+    container.innerHTML = '';
 
-    lista.innerHTML = '';
+    let subtotal = 0;
 
     carrinho.forEach(item => {
-        const subtotal = item.preco * item.quantidade;
-        const div = document.createElement('div');
-        div.className = 'item-carrinho';
-        div.innerHTML = `
-            <div style="flex:1; min-width: 0;">
-                <div class="item-nome" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.nome}</div>
-                <div class="item-preco-unit">
-                    R$ ${item.preco.toFixed(2).replace('.', ',')}
-                </div>
+        const itemSubtotal = item.preco * item.quantidade;
+        subtotal += itemSubtotal;
+
+        const el = document.createElement('div');
+        el.className = 'item-carrinho';
+        el.innerHTML = `
+            <div class="item-info">
+                <div class="item-nome">${item.nome}</div>
+                <div class="item-preco-unit">R$ ${item.preco.toFixed(2)} un.</div>
             </div>
             <div class="item-qty-ctrl">
-                <button class="qty-btn" onclick="alterarQtd(${item.produto_id}, -1)">−</button>
-                <input type="number" class="qty-input-cart" value="${item.quantidade}" min="1" max="${item.estoque_max}" onchange="editarQtdDireto(${item.produto_id}, this)">
-                <button class="qty-btn" onclick="alterarQtd(${item.produto_id}, +1)">+</button>
+                <button type="button" class="qty-btn" onclick="alterarQtdItemCarrinho(${item.produto_id}, -1)">−</button>
+                <input type="number" class="qty-input-cart" value="${item.quantidade}" min="1" max="${item.estoque_max}" onchange="atualizarQtdDiretaCarrinho(${item.produto_id}, this)">
+                <button type="button" class="qty-btn" onclick="alterarQtdItemCarrinho(${item.produto_id}, 1)">+</button>
             </div>
-            <div class="item-subtotal">
-                R$ ${subtotal.toFixed(2).replace('.', ',')}
-            </div>
-            <button class="item-remover" onclick="removerItem(${item.produto_id})" title="Remover">×</button>
+            <div class="item-subtotal">R$ ${itemSubtotal.toFixed(2)}</div>
+            <button type="button" class="item-remover" onclick="removerItemCarrinho(${item.produto_id})" title="Remover item">✕</button>
         `;
-        lista.appendChild(div);
+        container.appendChild(el);
     });
 
-    renderizarTotais();
-}
-
-function renderizarTotais() {
-    const subtotal = carrinho.reduce((acc, i) => acc + i.preco * i.quantidade, 0);
-    const descontoValor = clienteAtual.associado ? subtotal * (DESCONTO_PCT / 100) : 0;
-    const total = subtotal - descontoValor;
-
-    const fmt = v => 'R$ ' + v.toFixed(2).replace('.', ',');
-
-    document.getElementById('val-subtotal').textContent = fmt(subtotal);
-    document.getElementById('val-total').textContent    = fmt(total);
-
-    const linhaDesc  = document.getElementById('linha-desconto');
-    const labelDesc  = document.getElementById('label-desconto');
-    const valDesc    = document.getElementById('val-desconto');
-
-    if (clienteAtual.associado && descontoValor > 0) {
-        linhaDesc.style.display  = 'flex';
-        labelDesc.textContent    = `Desconto (${DESCONTO_PCT}%)`;
-        valDesc.textContent      = `− ${fmt(descontoValor)}`;
-    } else {
-        linhaDesc.style.display = 'none';
+    let valorDescontoAssoc = 0;
+    if (clienteAtual.associado && DESCONTO_PCT > 0) {
+        valorDescontoAssoc = subtotal * (DESCONTO_PCT / 100);
     }
+
+    const descontoManualInput = parseFloat(document.getElementById('desconto-manual').value) || 0;
+    const totalFinal = Math.max(0, subtotal - valorDescontoAssoc - descontoManualInput);
+
+    document.getElementById('val-subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
+    
+    const linhaDescontoAssoc = document.getElementById('linha-desconto-assoc');
+    if (clienteAtual.associado && DESCONTO_PCT > 0) {
+        document.getElementById('label-desconto-assoc').textContent = `Desconto (${DESCONTO_PCT}%)`;
+        document.getElementById('val-desconto-assoc').textContent = `— R$ ${valorDescontoAssoc.toFixed(2)}`;
+        linhaDescontoAssoc.style.display = 'flex';
+    } else {
+        linhaDescontoAssoc.style.display = 'none';
+    }
+
+    const linhaDescontoManual = document.getElementById('linha-desconto-manual');
+    if (descontoManualInput > 0) {
+        document.getElementById('val-desconto-manual').textContent = `— R$ ${descontoManualInput.toFixed(2)}`;
+        linhaDescontoManual.style.display = 'flex';
+    } else {
+        linhaDescontoManual.style.display = 'none';
+    }
+
+    document.getElementById('val-total').textContent = `R$ ${totalFinal.toFixed(2)}`;
+    
+    totaisBox.style.display = 'block';
+    btnFinalizar.disabled = false;
 }
 
+// ============================================================
+// Lógica do Modal PIX & Finalização de Venda
+// ============================================================
 function finalizarVenda() {
     if (carrinho.length === 0) return;
 
-    document.getElementById('input-carrinho').value =
-        JSON.stringify(carrinho.map(i => ({
-            produto_id: i.produto_id,
-            nome:       i.nome,
-            preco:      i.preco,
-            quantidade: i.quantidade,
-        })));
+    const pagamentos = [];
+    const met1 = document.getElementById('metodo-pagamento-1').value;
+    const val1 = parseFloat(document.getElementById('valor-pagamento-1').value) || 0;
+    
+    const met2 = document.getElementById('metodo-pagamento-2').value;
+    const val2 = parseFloat(document.getElementById('valor-pagamento-2').value) || 0;
 
-    document.getElementById('input-cliente-id').value = clienteAtual.id;
+    if (val1 > 0 && met1) pagamentos.push({ metodo: met1, valor: val1 });
+    if (val2 > 0 && met2) pagamentos.push({ metodo: met2, valor: val2 });
+
+    const descontoManual = parseFloat(document.getElementById('desconto-manual').value) || 0;
+
+    document.getElementById('input-carrinho').value = JSON.stringify(carrinho);
     document.getElementById('input-obs').value = document.getElementById('obs-input').value;
+    document.getElementById('input-desconto-manual').value = descontoManual;
+    document.getElementById('input-pagamentos-json').value = JSON.stringify(pagamentos);
 
+    // Verificar se algum dos métodos de pagamento selecionados é PIX
+    const temPix = pagamentos.some(p => p.metodo === 'PIX');
+    if (temPix) {
+        const valorPix = pagamentos.filter(p => p.metodo === 'PIX').reduce((acc, p) => acc + p.valor, 0);
+        abrirModalPix(valorPix);
+    } else {
+        confirmarEEnviarVenda();
+    }
+}
+
+function abrirModalPix(valor) {
+    document.getElementById('pix-modal-valor').textContent = `R$ ${valor.toFixed(2)}`;
+    
+    // Gera payload genérico / QR Code Dinâmico
+    const dummyPixCode = `00020126580014BR.GOV.BCB.PIX0136aapm-senai-pagamentos@senai.br520400005303986540${valor.toFixed(2).replace('.', '')}5802BR5915AAPM SENAI PDV6009SAO PAULO62070503***6304`;
+    document.getElementById('pix-copiacola-text').textContent = dummyPixCode;
+
+    // API pública para gerar o gráfico QR Code
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(dummyPixCode)}`;
+    document.getElementById('pix-qrcode-img').src = qrUrl;
+
+    document.getElementById('modal-pix').classList.add('active');
+    iniciarTimerPix(5 * 60); // 5 minutos
+}
+
+function fecharModalPix() {
+    document.getElementById('modal-pix').classList.remove('active');
+    if (pixTimerInterval) clearInterval(pixTimerInterval);
+}
+
+function iniciarTimerPix(segundos) {
+    if (pixTimerInterval) clearInterval(pixTimerInterval);
+    let tempoRestante = segundos;
+
+    const timerDisplay = document.getElementById('pix-timer');
+
+    pixTimerInterval = setInterval(() => {
+        const mins = Math.floor(tempoRestante / 60);
+        const secs = tempoRestante % 60;
+
+        timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+        if (tempoRestante <= 0) {
+            clearInterval(pixTimerInterval);
+            alert("O tempo para pagamento do PIX expirou.");
+            fecharModalPix();
+        }
+
+        tempoRestante--;
+    }, 1000);
+}
+
+function confirmarEEnviarVenda() {
+    fecharModalPix();
     document.getElementById('form-venda').submit();
 }
 
-// ============================================================
-// Filtro Instantâneo de Busca
-// ============================================================
-document.getElementById('busca-produto').addEventListener('input', function () {
-    const termo = this.value.toLowerCase().trim();
-    document.querySelectorAll('.produto-card').forEach(card => {
-        const nome = card.dataset.nomeLower || '';
-        card.style.display = nome.includes(termo) ? '' : 'none';
-    });
-});
-
-// ============================================================
-// Atalhos de Teclado
-// ============================================================
 function toggleModalAtalhos() {
     document.getElementById('modal-atalhos').classList.toggle('active');
 }
 
-document.addEventListener('keydown', function(e) {
+// Atalhos Globais de Teclado
+document.addEventListener('keydown', (e) => {
     if (e.key === 'F1') {
         e.preventDefault();
         toggleModalAtalhos();
@@ -1139,14 +1305,10 @@ document.addEventListener('keydown', function(e) {
         finalizarVenda();
     } else if (e.key === 'Escape') {
         document.getElementById('modal-atalhos').classList.remove('active');
-        document.activeElement.blur();
-    } else if (e.key === 'Enter' && e.ctrlKey) {
-        // Ctrl+Enter como atalho alternativo para finalizar
-        e.preventDefault();
-        finalizarVenda();
+        fecharModalPix();
     }
 });
-
 </script>
+
 </body>
 </html>
