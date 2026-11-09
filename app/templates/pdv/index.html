@@ -811,30 +811,6 @@ Dashboard</a></p>
                 </div>
             </div>
 
-            <!-- NOVA SEÇÃO: FORMA DE PAGAMENTO -->
-            <div class="pagamento-container" id="secao-pagamento" style="display:none; margin-top: 10px; margin-bottom: 10px;">
-                <label style="display:block; font-size:11px; font-weight:bold; color:#8899a6; text-transform:uppercase; margin-bottom:6px;">Forma de Pagamento</label>
-                <div class="pagamento-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px;">
-                    <button type="button" class="btn-pagamento" data-metodo="pix" onclick="selecionarPagamento('pix')">PIX</button>
-                    <button type="button" class="btn-pagamento" data-metodo="credito" onclick="selecionarPagamento('credito')">Crédito</button>
-                    <button type="button" class="btn-pagamento" data-metodo="debito" onclick="selecionarPagamento('debito')">Débito</button>
-                    <button type="button" class="btn-pagamento" data-metodo="dinheiro" onclick="selecionarPagamento('dinheiro')">Dinheiro</button>
-                    <button type="button" class="btn-pagamento" data-metodo="fiado" onclick="selecionarPagamento('fiado')" style="grid-column: span 2;">Vale / AAPM</button>
-                </div>
-
-                <!-- Campo adicional quando for selecionado Dinheiro -->
-                <div id="box-troco" style="display:none; margin-top:8px; padding:8px; background:rgba(255,255,255,0.05); border-radius:4px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:12px;">Valor Recebido:</span>
-                        <input type="number" id="val-recebido" step="0.01" placeholder="0,00" oninput="calcularTroco()" style="width:80px; text-align:right; background:#1e293b; border:1px solid #334155; color:#fff; border-radius:4px; padding:2px 4px;">
-                    </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; font-size:12px;">
-                        <span>Troco:</span>
-                        <strong id="val-troco" style="color:#10b981;">R$ 0,00</strong>
-                    </div>
-                </div>
-            </div>
-
             <div class="obs-container">
                 <textarea class="obs-input"
                           id="obs-input"
@@ -912,7 +888,6 @@ Dashboard</a></p>
 // ============================================================
 let carrinho = [];
 let clienteAtual = { id: 0, associado: false };
-let formaPagamento = 'pix'; // Padrão
 const DESCONTO_PCT = {{ desconto_associado }};
 
 // ============================================================
@@ -1038,54 +1013,11 @@ function atualizarCliente(select) {
     renderizarTotais();
 }
 
-function selecionarPagamento(metodo) {
-    formaPagamento = metodo;
-    document.querySelectorAll('.btn-pagamento').forEach(btn => {
-        if (btn.dataset.metodo === metodo) {
-            btn.classList.add('ativo');
-            btn.style.borderColor = '#3b82f6';
-            btn.style.backgroundColor = 'rgba(59, 130, 246, 0.2)';
-            btn.style.color = '#60a5fa';
-        } else {
-            btn.classList.remove('ativo');
-            btn.style.borderColor = '#334155';
-            btn.style.backgroundColor = '#1e293b';
-            btn.style.color = '#94a3b8';
-        }
-    });
-
-    const boxTroco = document.getElementById('box-troco');
-    if (metodo === 'dinheiro') {
-        boxTroco.style.display = 'block';
-        document.getElementById('val-recebido').focus();
-    } else {
-        boxTroco.style.display = 'none';
-    }
-}
-
-function calcularTroco() {
-    const subtotal = carrinho.reduce((acc, i) => acc + (i.preco * i.quantidade), 0);
-    const descontoValor = clienteAtual.associado ? subtotal * (DESCONTO_PCT / 100) : 0;
-    const total = subtotal - descontoValor;
-
-    const recebido = parseFloat(document.getElementById('val-recebido').value) || 0;
-    const trocoSpan = document.getElementById('val-troco');
-
-    if (recebido >= total && total > 0) {
-        const troco = recebido - total;
-        trocoSpan.textContent = `R$ ${troco.toFixed(2).replace('.', ',')}`;
-        trocoSpan.style.color = '#10b981';
-    } else {
-        trocoSpan.textContent = 'Insuficiente';
-        trocoSpan.style.color = '#ef4444';
-    }
-}
 
 function renderizarCarrinho() {
     const lista    = document.getElementById('lista-carrinho');
     const vazio    = document.getElementById('msg-vazio');
     const totais   = document.getElementById('totais');
-    const secaoPag = document.getElementById('secao-pagamento');
     const btnFinal = document.getElementById('btn-finalizar');
     const countEl  = document.getElementById('cart-count');
 
@@ -1097,14 +1029,12 @@ function renderizarCarrinho() {
         lista.appendChild(vazio);
         vazio.style.display = 'flex';
         totais.style.display = 'none';
-        secaoPag.style.display = 'none';
         btnFinal.disabled = true;
         return;
     }
 
     vazio.style.display = 'none';
     totais.style.display = 'block';
-    secaoPag.style.display = 'block';
     btnFinal.disabled = false;
 
     lista.innerHTML = '';
